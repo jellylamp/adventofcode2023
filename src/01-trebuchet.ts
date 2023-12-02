@@ -55,7 +55,7 @@ export class Trebuchet {
     let number = {
       indexCount: -1,
       valueOfNumber: 0
-    }
+    };
 
     while (codeArr.length > 0) {
       let char = 0;
@@ -82,11 +82,9 @@ export class Trebuchet {
     let runningNum = {
       indexCount: -1,
       valueOfNumber: 0
-    }
+    };
 
     this.integerList.some(integer => {
-      const firstIndexOf = codeString.indexOf(integer.spelling);
-      const lastIndexOf = codeString.lastIndexOf(integer.spelling);
 
       const indexOfInteger = direction === Direction.FIRST ? codeString.indexOf(integer.spelling) : codeString.lastIndexOf(integer.spelling);
       if (indexOfInteger !== -1) {
@@ -167,7 +165,7 @@ export class Trebuchet {
       numList.push(fullNum);
     });
 
-    this._trebuchetNumberSpelledOut = this.addArrayNumsTogether(numList);
+    this.trebuchetNumberSpelledOut = this.addArrayNumsTogether(numList);
   }
 
 }
