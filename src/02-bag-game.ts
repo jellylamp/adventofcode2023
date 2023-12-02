@@ -72,13 +72,9 @@ export class BagGame {
         const GREEN_MAX = 13;
         const BLUE_MAX = 14;
 
-        if (
-            (color === Color.RED && count <= RED_MAX) ||
+        return (color === Color.RED && count <= RED_MAX) ||
             (color === Color.GREEN && count <= GREEN_MAX) ||
-            (color === Color.BLUE && count <= BLUE_MAX)
-        ) {
-            return true;
-        }
-        return false;
+            (color === Color.BLUE && count <= BLUE_MAX);
+
     }
 }
