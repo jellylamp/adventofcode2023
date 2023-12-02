@@ -5,6 +5,13 @@ enum Color {
 }
 
 export class BagGame {
+    get totalPowerOfGames(): number {
+        return this._totalPowerOfGames;
+    }
+
+    set totalPowerOfGames(value: number) {
+        this._totalPowerOfGames = value;
+    }
     get totalIdCount(): number {
         return this._totalIdCount;
     }
@@ -14,6 +21,7 @@ export class BagGame {
     }
 
     private _totalIdCount: number;
+    private _totalPowerOfGames: number;
 
     constructor(input: string) {
         this.determinePossibleGames(input);
@@ -22,6 +30,7 @@ export class BagGame {
     determinePossibleGames(input: string) {
         const inputList = input.split('\n');
         this.totalIdCount = 0;
+        this.totalPowerOfGames = 0;
 
         inputList.forEach(line => {
             const id = line.substring(0, line.indexOf(':'));
@@ -33,6 +42,8 @@ export class BagGame {
             if (this.doesFollowRule(Color.RED, redCount) && this.doesFollowRule(Color.BLUE, blueCount) && this.doesFollowRule(Color.GREEN, greenCount)) {
                 this.totalIdCount += this.getNumberFromString(id);
             }
+            const power = redCount * blueCount * greenCount;
+            this.totalPowerOfGames += power;
         });
     }
 
