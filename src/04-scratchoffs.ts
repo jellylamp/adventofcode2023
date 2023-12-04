@@ -3,13 +3,6 @@ interface CardRelationships {
 }
 
 export class ScratchOffs {
-    get cardIdsCopied(): any[] {
-        return this._cardIdsCopied;
-    }
-
-    set cardIdsCopied(value: any[]) {
-        this._cardIdsCopied = value;
-    }
     get totalCardsWon(): number {
         return this._totalCardsWon;
     }
@@ -33,8 +26,6 @@ export class ScratchOffs {
     }
     private _totalWon: number;
     private _totalCardsWon: number;
-    private _cardIdsCopied: any[] = [];
-
     private _cardRelationships: CardRelationships = {};
 
     constructor(input: string) {
@@ -66,30 +57,36 @@ export class ScratchOffs {
             this.cardRelationships[cardId] = cardMap;
         });
 
-        // we have built out our map and now need to do the math part
-        this.totalCardsWon = 0;
-        this.calculateTotalCards(1);
-        this.addCardsThatAreNotCopied();
+        this.calculateCardsWon();
     }
 
-    calculateTotalCards(cardToCheck) {
+    calculateCardsWon() {
+        let cardWinsCounts = 0;
+        this.totalCardsWon = 0;
+        Object.keys(this.cardRelationships).forEach(card => {
+            // add 1 for self count and x for win count
+            cardWinsCounts += 1 + this.cardRelationships[card].length;
+
+            // grab all of the cascades for that card
+            this.calculateCascadingCards(parseInt(card), true);
+        });
+        this.totalCardsWon += cardWinsCounts;
+    }
+
+
+    calculateCascadingCards(cardToCheck, initial) {
         // now loop through the values of each entry and grab its total and add it... recursion
         const cardsWon = this.cardRelationships[cardToCheck];
         let cardsToAdd = cardsWon.length;
-        this.cardIdsCopied.push(cardToCheck);
 
-        this.totalCardsWon += 1 + cardsToAdd;
+        // if this is initial then dont double count
+        if (!initial) {
+            this.totalCardsWon += cardsToAdd;
+        }
 
         cardsWon.forEach(cardId => {
-            this.calculateTotalCards(cardId);
+            this.calculateCascadingCards(cardId, false);
         });
-    }
-
-    addCardsThatAreNotCopied() {
-        // make sure that copied cards is a unique array
-        this.cardIdsCopied = Array.from(new Set(this.cardIdsCopied));
-        const nonIntersectingKeys = Object.keys(this.cardRelationships).filter(key => !this.cardIdsCopied.includes(Number(key)));
-        this.totalCardsWon += nonIntersectingKeys.length;
     }
 
     private calculateTotalWinningsPart1(intersection: string[]) {
