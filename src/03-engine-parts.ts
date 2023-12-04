@@ -107,10 +107,10 @@ export class EngineParts {
             return;
         }
 
-        const rightNeighbor = neighbors[4];
-        const leftNeighbor = neighbors[3];
-        const twoRightNeighhor = grid[row][column + 2];
-        const twoLeftNeighhor = grid[row][column - 2];
+        const rightNeighbor = this.getNeighborValue(neighbors[4]);
+        const leftNeighbor = this.getNeighborValue(neighbors[3]);
+        const twoRightNeighhor = this.getNeighborValue(grid[row][column + 2]);
+        const twoLeftNeighhor = this.getNeighborValue(grid[row][column - 2]);
         // replace zeros and all non digits
         const fullNumber = this.createFullNumber(rightNeighbor, leftNeighbor, twoRightNeighhor, twoLeftNeighhor, cell);
 
@@ -144,6 +144,16 @@ export class EngineParts {
                 grid[row][column + 2] = toReplaceWith;
             }
         }
+    }
+
+    private getNeighborValue(neighbor) {
+        if (neighbor === undefined) {
+            return neighbor;
+        }
+        if (neighbor.indexOf(':') !== -1) {
+            return '.'
+        }
+        return neighbor;
     }
 
     createFullNumber(rightNeighbor, leftNeighbor, twoRightNeighbor, twoLeftNeighbor, cell) {
