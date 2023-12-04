@@ -15,6 +15,17 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11`;
 
   const scratchoffOutput = new ScratchOffs(input);
   expect(scratchoffOutput.totalWon).toEqual(13);
+  expect(scratchoffOutput.totalCardsWon).toEqual(30);
+});
+
+test("Day 4 puzzle a edge case, no wins", () => {
+  const input = `Card 1: 10 20 30 40 50 | 60 70 80 90 100
+Card 2: 11 21 31 41 51 | 61 71 81 91 101
+Card 3: 12 22 32 42 52 | 62 72 82 92 102`;
+
+  const scratchoffOutput = new ScratchOffs(input);
+  expect(scratchoffOutput.totalWon).toEqual(0);
+  expect(scratchoffOutput.totalCardsWon).toEqual(3);
 });
 
 test("Day 4 puzzle a input sample", () => {
@@ -234,6 +245,7 @@ Card 213:  8 24 48  5 27 13 71 26 17 21 | 63 11 89 35 69 98 91 60 51 70 12 62 39
 
   const scratchoffOutput = new ScratchOffs(input);
   expect(scratchoffOutput.totalWon).toEqual(25183);
+  expect(scratchoffOutput.totalCardsWon).toEqual(92381);
 });
 
 // test("Day 2 puzzle b sample", () => {
