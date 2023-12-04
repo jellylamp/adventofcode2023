@@ -1,13 +1,6 @@
 const array2d = require('array2d');
 
 export class EngineParts {
-    get runningPartNumber(): number {
-        return this._runningPartNumber;
-    }
-
-    set runningPartNumber(value: number) {
-        this._runningPartNumber = value;
-    }
     get totalCount(): number {
         return this._totalCount;
     }
@@ -16,7 +9,6 @@ export class EngineParts {
         this._totalCount = value;
     }
     private _totalCount: number;
-    private _runningPartNumber: number;
 
     constructor(input: string) {
         this.determineEnginePartCount(input);
@@ -68,21 +60,22 @@ export class EngineParts {
         //change the grid to zeros so we don't double count!
         grid[row][column] = '.';
 
-        if (leftNeighbor !== undefined && leftNeighbor.match(/[0-9]/)) {
+        const digitsOnly = /[0-9]/;
+        if (leftNeighbor !== undefined && leftNeighbor.match(digitsOnly)) {
             grid[row][column - 1] = '.';
 
             // don't replace two right neighbor also if it its a symbol
-            if (twoLeftNeighhor !== undefined && twoLeftNeighhor.match(/[0-9]/)) {
+            if (twoLeftNeighhor !== undefined && twoLeftNeighhor.match(digitsOnly)) {
                 grid[row][column - 2] = '.';
             }
         }
 
         //don't forward replace if there is a period breaking it up
-        if (rightNeighbor !== undefined && rightNeighbor.match(/[0-9]/)) {
+        if (rightNeighbor !== undefined && rightNeighbor.match(digitsOnly)) {
             grid[row][column + 1] = '.';
 
             // don't replace two right neighbor also if it its a symbol
-            if (twoRightNeighhor !== undefined && twoRightNeighhor.match(/[0-9]/)) {
+            if (twoRightNeighhor !== undefined && twoRightNeighhor.match(digitsOnly)) {
                 grid[row][column + 2] = '.';
             }
         }
@@ -93,7 +86,8 @@ export class EngineParts {
         fullNumber = fullNumber.replaceAll('undefined', "");
 
         // if we are here, there is a special character in the middle
-        let characterBookends =  fullNumber.split(/[^0-9]+/).filter(Boolean);
+        const fullNumbersOnly = /[^0-9]+/;
+        let characterBookends =  fullNumber.split(fullNumbersOnly).filter(Boolean);
 
         characterBookends = characterBookends.filter(item => {
           const isNumeric = !isNaN(parseFloat(item)) && isFinite(Number(item));
