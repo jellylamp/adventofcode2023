@@ -57,35 +57,32 @@ export class EngineParts {
     }
 
     getFullNumberAndAddToTotal(cell, row, column, grid, neighbors) {
-        // knowns: 1, 2 or 3 digit numbers
-        // 3 cases:
-        // left is a period, can tell that by neighbors[5]???
-        // right is a period, can tell that by neighbors[1]
-        // two right is a number... can tell that grid[row][column + 2]
-        // two left is a number... can tell that with grid[row][column - 2]
-
-        // if we are in here we already found a symbol SO get the full number then set all items to a known string in the main grid so we don't add it twice
-
         const rightNeighbor = neighbors[4];
         const leftNeighbor = neighbors[3];
         const twoRightNeighhor = grid[row][column + 2];
         const twoLeftNeighhor = grid[row][column - 2];
         // replace zeros and all non digits
         const fullNumber = this.createFullNumber(rightNeighbor, leftNeighbor, twoRightNeighhor, twoLeftNeighhor, cell);
-        const fullNumberWithCharsRemoved = fullNumber.replaceAll(/\D/g,'');
-        this.totalCount += parseInt(fullNumberWithCharsRemoved);
+        this.totalCount += parseInt(fullNumber);
 
         //change the grid to zeros so we don't double count!
-        grid[row][column - 2] = '.';
-        grid[row][column - 1] = '.';
         grid[row][column] = '.';
 
+        if (leftNeighbor !== undefined && leftNeighbor.match(/[0-9]/)) {
+            grid[row][column - 1] = '.';
+
+            // don't replace two right neighbor also if it its a symbol
+            if (twoLeftNeighhor !== undefined && twoLeftNeighhor.match(/[0-9]/)) {
+                grid[row][column - 2] = '.';
+            }
+        }
+
         //don't forward replace if there is a period breaking it up
-        if (rightNeighbor !== undefined && !rightNeighbor.match(/[^0-9]|^\d+\.\d*$/)) {
+        if (rightNeighbor !== undefined && rightNeighbor.match(/[0-9]/)) {
             grid[row][column + 1] = '.';
 
             // don't replace two right neighbor also if it its a symbol
-            if (twoRightNeighhor !== undefined && !twoRightNeighhor.match(/[^0-9]|^\d+\.\d*$/)) {
+            if (twoRightNeighhor !== undefined && twoRightNeighhor.match(/[0-9]/)) {
                 grid[row][column + 2] = '.';
             }
         }
@@ -94,11 +91,6 @@ export class EngineParts {
     createFullNumber(rightNeighbor, leftNeighbor, twoRightNeighbor, twoLeftNeighbor, cell) {
         let fullNumber = `${twoLeftNeighbor}${leftNeighbor}${cell}${rightNeighbor}${twoRightNeighbor}`;
         fullNumber = fullNumber.replaceAll('undefined', "");
-
-        // full number does not have any special characters in it
-        if (!fullNumber.match(/[^0-9]|^\d+\.\d*$/)) {
-            return fullNumber;
-        }
 
         // if we are here, there is a special character in the middle
         let characterBookends =  fullNumber.split(/[^0-9]+/).filter(Boolean);
