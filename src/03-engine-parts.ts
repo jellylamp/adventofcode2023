@@ -1,6 +1,13 @@
 const array2d = require('array2d');
 
 export class EngineParts {
+    get gearTotalCount(): number {
+        return this._gearTotalCount;
+    }
+
+    set gearTotalCount(value: number) {
+        this._gearTotalCount = value;
+    }
     get totalCount(): number {
         return this._totalCount;
     }
@@ -10,8 +17,11 @@ export class EngineParts {
     }
     private _totalCount: number;
 
+    private _gearTotalCount: number;
+
     constructor(input: string) {
         this.determineEnginePartCount(input);
+        this.determineGearCount(input);
     }
 
     determineEnginePartCount(input: string) {
@@ -23,60 +33,115 @@ export class EngineParts {
         array2d.eachCell(
             grid,
             (cell, row, column, grid) => {
-                this.checkSurroundingCell(cell, row, column, grid);
+                this.checkSurroundingCellsForCharacters(cell, row, column, grid, false);
+            }
+        );
+    }
+
+    determineGearCount(input: string) {
+        const inputList = input.split('\n');
+        this.gearTotalCount = 0;
+        const grid = this.constructGrid(inputList);
+        array2d.stringize(grid);
+
+        array2d.eachCell(
+            grid,
+            (cell, row, column, grid) => {
+                // run through the grid and replace all numbers with their squashed number
+                this.checkSurroundingCellsForCharacters(cell, row, column, grid, true);
             }
         );
 
+        // should go after the first run through so all numbers are replaced first
+        array2d.eachCell(
+            grid,
+            (cell, row, column, grid) => {
+                // run through the grid and replace all numbers with their squashed number
+                this.checkSurroundingCellsForNumbers(cell, row, column, grid);
+            }
+        );
     }
 
-    checkSurroundingCell(cell, row, column, grid) {
-        let shouldAdd = false;
-        if (cell === '.' || isNaN(cell)) {
+    checkSurroundingCellsForCharacters(cell, row, column, grid, shouldCalculateGears) {
+        let shouldAddToTotal = false;
+        if (cell === '.' || cell === '*' || isNaN(cell)) {
             return;
         }
 
         // get surrounding cells
         const neighbors: any = array2d.neighbors(grid, row, column);
         neighbors.forEach(neighborCell => {
+            // running total looks for adjacent special chars
             if (neighborCell !== undefined && isNaN(neighborCell) && neighborCell !== '.') {
-                shouldAdd = true;
+                shouldAddToTotal = true;
             }
         });
 
-        if (shouldAdd) {
-            this.getFullNumberAndAddToTotal(cell, row, column, grid, neighbors);
+        if (shouldAddToTotal) {
+            this.getFullNumberAndAddToTotal(cell, row, column, grid, neighbors, shouldCalculateGears);
         }
     }
 
-    getFullNumberAndAddToTotal(cell, row, column, grid, neighbors) {
+    checkSurroundingCellsForNumbers(cell, row, column, grid) {
+        // only care about potential gears
+        if (cell !== '*') {
+            return;
+        }
+
+        // get surrounding cells and filter out any non numbers
+        const neighbors: any = array2d.neighbors(grid, row, column);
+        const uniqueNeighbors = Array.from(new Set(neighbors));
+        const parsedNeighbors = uniqueNeighbors.map((item: any) => (typeof item === 'string' ? item.substring(0, item.indexOf(':')) : item));
+        const numNeighbors = parsedNeighbors.filter(item => {
+            return !isNaN(parseFloat(item)) && isFinite(Number(item));
+        });
+
+        if (numNeighbors.length === 2) {
+            this.gearTotalCount += (parseInt(String(numNeighbors[0])) * parseInt(String(numNeighbors[1])));
+        }
+    }
+
+    getFullNumberAndAddToTotal(cell, row, column, grid, neighbors, shouldReplaceWithTotal) {
+        if (cell.toString().length > 1) {
+            // duplicate return
+            return;
+        }
+
         const rightNeighbor = neighbors[4];
         const leftNeighbor = neighbors[3];
         const twoRightNeighhor = grid[row][column + 2];
         const twoLeftNeighhor = grid[row][column - 2];
         // replace zeros and all non digits
         const fullNumber = this.createFullNumber(rightNeighbor, leftNeighbor, twoRightNeighhor, twoLeftNeighhor, cell);
-        this.totalCount += parseInt(fullNumber);
 
-        //change the grid to zeros so we don't double count!
-        grid[row][column] = '.';
+        //change the grid to zeros so we don't double count! only care about total count for non gears
+        let toReplaceWith = '.';
+        if (shouldReplaceWithTotal) {
+            // replace with the full number and also a row/column so we can scan out duplicates but not real matches
+            toReplaceWith = `${fullNumber}:${row}${column}`;
+            grid[row][column] = toReplaceWith;
+        } else {
+            this.totalCount += parseInt(fullNumber);
+            grid[row][column] = toReplaceWith;
+        }
 
         const digitsOnly = /[0-9]/;
         if (leftNeighbor !== undefined && leftNeighbor.match(digitsOnly)) {
-            grid[row][column - 1] = '.';
+            grid[row][column - 1] = toReplaceWith;
 
             // don't replace two right neighbor also if it its a symbol
             if (twoLeftNeighhor !== undefined && twoLeftNeighhor.match(digitsOnly)) {
-                grid[row][column - 2] = '.';
+                grid[row][column - 2] = toReplaceWith;
             }
         }
 
         //don't forward replace if there is a period breaking it up
         if (rightNeighbor !== undefined && rightNeighbor.match(digitsOnly)) {
-            grid[row][column + 1] = '.';
+            grid[row][column + 1] = toReplaceWith;
 
             // don't replace two right neighbor also if it its a symbol
             if (twoRightNeighhor !== undefined && twoRightNeighhor.match(digitsOnly)) {
-                grid[row][column + 2] = '.';
+                grid[row][column + 2] = toReplaceWith;
             }
         }
     }

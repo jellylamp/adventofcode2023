@@ -5,7 +5,8 @@ import {EngineParts} from "./03-engine-parts";
 expect.extend(matchers);
 
 test("Day 3 puzzle a sample", () => {
-  const input = `467..114..
+  const input = `
+467..114..
 ...*......
 ..35..633.
 ......#...
@@ -18,6 +19,7 @@ test("Day 3 puzzle a sample", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(4361);
+  expect(enginePartsOutput.gearTotalCount).toEqual(467835);
 });
 
 test("Day 3 puzzle a edge case: single digit", () => {
@@ -27,6 +29,7 @@ test("Day 3 puzzle a edge case: single digit", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(4);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: two diagonals", () => {
@@ -38,6 +41,7 @@ test("Day 3 puzzle a edge case: two diagonals", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(1025);
+  expect(enginePartsOutput.gearTotalCount).toEqual(262650);
 });
 
 test("Day 3 puzzle a edge case: double count", () => {
@@ -49,6 +53,7 @@ test("Day 3 puzzle a edge case: double count", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(1025);
+  expect(enginePartsOutput.gearTotalCount).toEqual(262650);
 });
 
 test("Day 3 puzzle a edge case: special char in string", () => {
@@ -60,6 +65,7 @@ test("Day 3 puzzle a edge case: special char in string", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(1025);
+  expect(enginePartsOutput.gearTotalCount).toEqual(262650);
 });
 
 test("Day 3 puzzle a edge case: special char tests", () => {
@@ -87,6 +93,7 @@ test("Day 3 puzzle a edge case: special char tests", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(18);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: reddit edge cases", () => {
@@ -108,6 +115,9 @@ test("Day 3 puzzle a edge case: reddit edge cases", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(925);
+  expect(enginePartsOutput.gearTotalCount).toEqual(
+      (78*78)+(12*56)
+  );
 });
 
 test("Day 3 puzzle a edge case: reddit edge cases 2", () => {
@@ -121,6 +131,9 @@ test("Day 3 puzzle a edge case: reddit edge cases 2", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(40);
+  expect(enginePartsOutput.gearTotalCount).toEqual(
+    (5*13)+(7*13)+(7*13)+(13*15)
+  );
 });
 
 test("Day 3 puzzle a edge case: line break test?", () => {
@@ -132,6 +145,7 @@ test("Day 3 puzzle a edge case: line break test?", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(0);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: duplicate numbers", () => {
@@ -144,6 +158,7 @@ test("Day 3 puzzle a edge case: duplicate numbers", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(156);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: reddit test case 3", () => {
@@ -156,6 +171,7 @@ test("Day 3 puzzle a edge case: reddit test case 3", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(4);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: reddit test case 4 - handle undefineds", () => {
@@ -170,6 +186,7 @@ test("Day 3 puzzle a edge case: reddit test case 4 - handle undefineds", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(1+2+397+1+2);
+  expect(enginePartsOutput.gearTotalCount).toEqual((1*2)+(1*2));
 });
 
 test("Day 3 puzzle a edge case: jebs repeating numbers", () => {
@@ -182,6 +199,7 @@ test("Day 3 puzzle a edge case: jebs repeating numbers", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(4);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: jebs 'example'", () => {
@@ -201,6 +219,7 @@ test("Day 3 puzzle a edge case: jebs 'example'", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(4361);
+  expect(enginePartsOutput.gearTotalCount).toEqual((467*35)+(755*598));
 });
 
 test("Day 3 puzzle a edge case: corners", () => {
@@ -214,6 +233,7 @@ test("Day 3 puzzle a edge case: corners", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(24);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: squashed numbers", () => {
@@ -227,6 +247,7 @@ test("Day 3 puzzle a edge case: squashed numbers", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(123);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: two special chars", () => {
@@ -239,6 +260,7 @@ test("Day 3 puzzle a edge case: two special chars", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(24+4);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: false positive?", () => {
@@ -249,6 +271,7 @@ test("Day 3 puzzle a edge case: false positive?", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(0);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: example 7", () => {
@@ -266,6 +289,7 @@ $..
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(11+11+11+11);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 
@@ -280,6 +304,7 @@ $11
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(11+11);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: example 5", () => {
@@ -293,6 +318,7 @@ $......$
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(11+11+11+11);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: example 4", () => {
@@ -306,6 +332,7 @@ $......$
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(4);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: example 3", () => {
@@ -318,6 +345,7 @@ test("Day 3 puzzle a edge case: example 3", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(11+11+11+11);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: don't double count", () => {
@@ -330,6 +358,7 @@ test("Day 3 puzzle a edge case: don't double count", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(28);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 test("Day 3 puzzle a edge case: rando in comments", () => {
@@ -351,6 +380,7 @@ test("Day 3 puzzle a edge case: rando in comments", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(5+7+4+13+9+15+9);
+  expect(enginePartsOutput.gearTotalCount).toEqual((5*13)+(13*15)+(7*13)+(7*13)+(4*9));
 });
 
 test("Day 3 puzzle input sample", () => {
@@ -499,6 +529,7 @@ test("Day 3 puzzle input sample", () => {
 
   const enginePartsOutput = new EngineParts(input);
   expect(enginePartsOutput.totalCount).toEqual(530849);
+  expect(enginePartsOutput.gearTotalCount).toEqual(0);
 });
 
 
