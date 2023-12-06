@@ -18,6 +18,13 @@ class Coordinates {
 }
 
 export class SeedPlanting {
+    get lowestRangeLocation(): number {
+        return this._lowestRangeLocation;
+    }
+
+    set lowestRangeLocation(value: number) {
+        this._lowestRangeLocation = value;
+    }
     get lowestLocation(): number {
         return this._lowestLocation;
     }
@@ -27,6 +34,7 @@ export class SeedPlanting {
     }
 
     private _lowestLocation = -1;
+    private _lowestRangeLocation = -1;
 
     constructor(input: string) {
         this.determineSeedPlots(input);
@@ -48,18 +56,54 @@ export class SeedPlanting {
         seedList.shift();
 
         seedList.forEach(seedId => {
-            const soilId = this.getSeedInfo(seedToSoilList, parseInt(seedId));
-            const fertilizerId = this.getSeedInfo(soilToFertilizerList, soilId);
-            const waterId = this.getSeedInfo(fertilizerToWaterList, fertilizerId);
-            const lightId = this.getSeedInfo(waterToLightList, waterId);
-            const tempId = this.getSeedInfo(lightToTemperatureList, lightId);
-            const humidityId = this.getSeedInfo(temperatureToHumidityList, tempId);
-            const locationId = this.getSeedInfo(humidityToLocationList, humidityId);
-
-            if (this._lowestLocation === -1 || this.lowestLocation > locationId) {
-                this.lowestLocation = locationId;
-            }
+            this.getSeedValues(
+                seedId,
+                seedToSoilList,
+                soilToFertilizerList,
+                fertilizerToWaterList,
+                waterToLightList,
+                lightToTemperatureList,
+                temperatureToHumidityList,
+                humidityToLocationList,
+                false);
         });
+
+
+        // calculate based on ranges!
+        for (let i = 0; i < seedList.length; i = i + 2) {
+            const seedStart = parseInt(seedList[i]);
+            const seedRange = parseInt(seedList[i + 1]);
+
+            for (let seedId = seedStart; seedId < seedStart + seedRange; seedId += 1) {
+                this.getSeedValues(
+                    seedId,
+                    seedToSoilList,
+                    soilToFertilizerList,
+                    fertilizerToWaterList,
+                    waterToLightList,
+                    lightToTemperatureList,
+                    temperatureToHumidityList,
+                    humidityToLocationList,
+                    true);
+            }
+        }
+    }
+
+    private getSeedValues(seedId, seedToSoilList: any[], soilToFertilizerList: any[], fertilizerToWaterList: any[], waterToLightList: any[], lightToTemperatureList: any[], temperatureToHumidityList: any[], humidityToLocationList: any[], isRange) {
+        const soilId = this.getSeedInfo(seedToSoilList, parseInt(seedId));
+        const fertilizerId = this.getSeedInfo(soilToFertilizerList, soilId);
+        const waterId = this.getSeedInfo(fertilizerToWaterList, fertilizerId);
+        const lightId = this.getSeedInfo(waterToLightList, waterId);
+        const tempId = this.getSeedInfo(lightToTemperatureList, lightId);
+        const humidityId = this.getSeedInfo(temperatureToHumidityList, tempId);
+        const locationId = this.getSeedInfo(humidityToLocationList, humidityId);
+
+        if (!isRange && (this._lowestLocation === -1 || this.lowestLocation > locationId)) {
+            this.lowestLocation = locationId;
+        }
+        if (isRange && (this.lowestRangeLocation === -1 || this.lowestRangeLocation > locationId)) {
+            this.lowestRangeLocation = locationId;
+        }
     }
 
     getSeedInfo(listOfCoords, idToUse) {

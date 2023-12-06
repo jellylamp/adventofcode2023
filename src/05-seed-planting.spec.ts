@@ -43,6 +43,7 @@ humidity-to-location map:
 
   const seedPlots = new SeedPlanting(input);
   expect(seedPlots.lowestLocation).toEqual(35);
+  expect(seedPlots.lowestRangeLocation).toEqual(46);
 });
 
 test("Day 5 puzzle a input", () => {
@@ -275,4 +276,5 @@ humidity-to-location map:
 
   const seedPlots = new SeedPlanting(input);
   expect(seedPlots.lowestLocation).toEqual(31599214);
+  expect(seedPlots.lowestRangeLocation).toEqual(46);
 });
