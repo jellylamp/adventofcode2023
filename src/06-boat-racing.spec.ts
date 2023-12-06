@@ -10,6 +10,7 @@ Distance:  9  40  200`;
 
   const boatRacing = new BoatRacing(input);
   expect(boatRacing.winningRaceProduct).toEqual(288);
+  expect(boatRacing.bigRaceWinCount).toEqual(71503);
 });
 
 test("Day 6 puzzle input sample", () => {
@@ -18,4 +19,5 @@ Distance:   295   1734   1278   1210`;
 
   const boatRacing = new BoatRacing(input);
   expect(boatRacing.winningRaceProduct).toEqual(1413720);
+  expect(boatRacing.bigRaceWinCount).toEqual(30565288);
 });
