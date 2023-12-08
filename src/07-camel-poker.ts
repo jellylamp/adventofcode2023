@@ -53,41 +53,16 @@ export class PokerHand {
         this._cardString = cardString;
         this._bid = bid;
     }
-
-    static sortHands(a: PokerHand, b: PokerHand): number {
-        // sort by order of enum
-        if (a.handType === b.handType) {
-            // add additional sorting; each hand is 5 cards
-            for (let i = 0; i < 5; i += 1) {
-                const aChar = a.cardString[i];
-                const bChar = b.cardString[i];
-
-                // loop through comparing card values
-                const aValue = PokerHand.getCardValue(aChar);
-                const bValue = PokerHand.getCardValue(bChar);
-
-                if (aValue > bValue) {
-                    return 1;
-                } else if (bValue > aValue) {
-                    return -1;
-                }
-            }
-        } else if (a.handType > b.handType) {
-            return 1;
-        } else {
-            return -1;
-        }
-        // in case of a final tie
-        return 0;
-    }
-
-    static getCardValue(card) {
-        const customOrder = "23456789TJQKA";
-        return customOrder.indexOf(card);
-    }
 }
 
 export class CamelPoker {
+    get hasJokers(): boolean {
+        return this._hasJokers;
+    }
+
+    set hasJokers(value: boolean) {
+        this._hasJokers = value;
+    }
     get totalWinnings(): number {
         return this._totalWinnings;
     }
@@ -105,12 +80,14 @@ export class CamelPoker {
     private _handList = [];
 
     private _totalWinnings = 0;
+    private _hasJokers: boolean;
 
-    constructor(input: string) {
-        this.createPokerHandList(input);
+    constructor(input: string, hasJokers) {
+        this.hasJokers = hasJokers;
+        this.createPokerHandList(input, hasJokers);
 
         // sort the array
-        this._handList.sort(PokerHand.sortHands);
+        this._handList.sort((a, b) => this.sortHands(a, b, hasJokers));
         this.calculateTotalWinnings();
     }
 
@@ -120,14 +97,14 @@ export class CamelPoker {
         }
     }
 
-    createPokerHandList(input) {
+    createPokerHandList(input, hasJokers) {
         const inputArr = input.split('\n');
 
         for (let i = 0; i < inputArr.length; i += 1) {
             const handArr = inputArr[i].split(' ');
             const handString = handArr[0];
             const bidValue = parseInt(handArr[1]);
-            const handObj = this.organizeHand(handString);
+            const handObj = this.organizeHand(handString, hasJokers);
             const handType = CamelPoker.getHandType(handObj);
 
             this.handList.push(new PokerHand(handType, handObj, handString, bidValue));
@@ -172,12 +149,18 @@ export class CamelPoker {
         }
     }
 
-    private organizeHand(handString) {
+    private organizeHand(handString, hasJokers) {
         let charCount = {};
+        let jokerCount = 0;
 
         // Iterate through each character in the string
         for (let i = 0; i < handString.length; i++) {
             let currentChar = handString[i];
+
+            if (hasJokers && currentChar === 'J') {
+                jokerCount += 1;
+                continue;
+            }
 
             // Check if the character is already in the object
             if (charCount[currentChar]) {
@@ -189,6 +172,68 @@ export class CamelPoker {
             }
         }
 
+        if (hasJokers && jokerCount > 0) {
+            // add jokerCount to highest numbered variable; if even add to highest valued variable
+            charCount[this.getKeyWithMaxValue(charCount)] += jokerCount;
+        }
+
         return charCount;
+    }
+
+    getKeyWithMaxValue(obj) {
+        let maxKey = null;
+        let maxValue = 1;
+
+        for (const key in obj) {
+          const value = obj[key];
+
+          if (value > maxValue) {
+            maxValue = value;
+            maxKey = key;
+          }
+
+          if (value === maxValue) {
+              // we want to help the highest value so dont include jokers
+              maxKey = CamelPoker.getCardValue(maxKey, false) > CamelPoker.getCardValue(key, false) ? maxKey : key;
+          }
+        }
+
+        return maxKey;
+    }
+
+     sortHands(a: PokerHand, b: PokerHand, hasJokers): number {
+        // sort by order of enum
+        if (a.handType === b.handType) {
+            // add additional sorting; each hand is 5 cards
+            for (let i = 0; i < 5; i += 1) {
+                const aChar = a.cardString[i];
+                const bChar = b.cardString[i];
+
+                // loop through comparing card values
+                const aValue = CamelPoker.getCardValue(aChar, hasJokers);
+                const bValue = CamelPoker.getCardValue(bChar, hasJokers);
+
+                if (aValue > bValue) {
+                    return 1;
+                } else if (bValue > aValue) {
+                    return -1;
+                }
+            }
+        } else if (a.handType > b.handType) {
+            return 1;
+        } else {
+            return -1;
+        }
+        // in case of a final tie
+        return 0;
+    }
+
+    static getCardValue(card, hasJokers) {
+        let customOrder = "23456789TJQKA";
+
+        if (hasJokers) {
+            customOrder = "J23456789TQKA";
+        }
+        return customOrder.indexOf(card);
     }
 }

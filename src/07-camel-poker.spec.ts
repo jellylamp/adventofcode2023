@@ -12,8 +12,11 @@ KK677 28
 KTJJT 220
 QQQJA 483`;
 
-  const camelPoker = new CamelPoker(input);
+  const camelPoker = new CamelPoker(input, false);
   expect(camelPoker.totalWinnings).toEqual(6440);
+
+  const camelPokerJokers = new CamelPoker(input, true);
+  expect(camelPokerJokers.totalWinnings).toEqual(5905);
 });
 
 test("Day 7 five of a kind edge case", () => {
@@ -21,8 +24,16 @@ test("Day 7 five of a kind edge case", () => {
 AAAAA 2
 KKKKK 3`;
 
-  const camelPoker = new CamelPoker(input);
+  const camelPoker = new CamelPoker(input, false);
   expect(camelPoker.totalWinnings).toEqual(6 + 6 + 1);
+});
+
+test("Day 7 five of a kind edge case part b", () => {
+  const input = `5J55J 1
+5555J 3`;
+
+  const camelPoker = new CamelPoker(input, true);
+  expect(camelPoker.totalWinnings).toEqual(6 + 1);
 });
 
 test("Day 6 puzzle input sample", () => {
@@ -1027,6 +1038,9 @@ A5A55 707
 A33J3 675
 5T694 609`;
 
-  const camelPoker = new CamelPoker(input);
+  const camelPoker = new CamelPoker(input, false);
   expect(camelPoker.totalWinnings).toEqual(253205868);
+
+  const camelPokerJokers = new CamelPoker(input, true);
+  expect(camelPokerJokers.totalWinnings).toEqual(253907829);
 });
