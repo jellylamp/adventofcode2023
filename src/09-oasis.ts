@@ -1,9 +1,13 @@
 export class Oasis {
+  get runningBackwardsTotal(): number {
+    return this._runningBackwardsTotal;
+  }
   get runningTotal(): number {
     return this._runningTotal;
   }
 
   private _runningTotal = 0;
+  private _runningBackwardsTotal = 0;
 
   constructor(input: string) {
     const inputArr = input.split('\n');
@@ -16,6 +20,7 @@ export class Oasis {
       const eachSequenceLine = [lineArr];
       this.calculateValuesDown(lineArr, eachSequenceLine);
       this._runningTotal += this.extrapolateNextValue(eachSequenceLine);
+      this._runningBackwardsTotal += this.extrapolatePreviousValue(eachSequenceLine);
     })
   }
 
@@ -28,6 +33,17 @@ export class Oasis {
     }
     return extrapolated;
   }
+
+  extrapolatePreviousValue(eachSequenceLine) {
+    let extrapolated = 0;
+    for (let index = eachSequenceLine.length - 1; index > 0; index = index - 1) {
+      const lineAbove = eachSequenceLine[index - 1];
+
+      extrapolated = lineAbove[0] - extrapolated;
+    }
+    return extrapolated;
+  }
+
 
   calculateValuesDown(lineValues, eachSequenceLine) {
     const nextLine = [];

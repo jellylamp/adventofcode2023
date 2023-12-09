@@ -14,6 +14,7 @@ test("Day 8 puzzle a sample", () => {
 
   const oasis = new Oasis(input);
   expect(oasis.runningTotal).toEqual(114);
+  expect(oasis.runningBackwardsTotal).toEqual(2);
 });
 
 test("Day 8 puzzle a input", () => {
@@ -220,4 +221,5 @@ test("Day 8 puzzle a input", () => {
 
   const oasis = new Oasis(input);
   expect(oasis.runningTotal).toEqual(1953784198);
+  expect(oasis.runningBackwardsTotal).toEqual(957);
 });
