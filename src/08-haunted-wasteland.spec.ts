@@ -13,7 +13,7 @@ AAA = (BBB, BBB)
 BBB = (AAA, ZZZ)
 ZZZ = (ZZZ, ZZZ)`;
 
-  const hauntedWasteland = new HauntedWasteland(input);
+  const hauntedWasteland = new HauntedWasteland(input, false);
   expect(hauntedWasteland.countToZZZ).toEqual(6);
 });
 
@@ -28,7 +28,7 @@ EEE = (EEE, EEE)
 GGG = (GGG, GGG)
 ZZZ = (ZZZ, ZZZ)`;
 
-  const hauntedWasteland = new HauntedWasteland(input);
+  const hauntedWasteland = new HauntedWasteland(input, false);
   expect(hauntedWasteland.countToZZZ).toEqual(2);
 });
 
@@ -783,6 +783,6 @@ LBV = (FFL, KHB)
 XXS = (VXF, BGH)
 GMH = (GGS, KLG)`;
 
-  const hauntedWasteland = new HauntedWasteland(input);
-  expect(hauntedWasteland.countToZZZ).toEqual(6);
+  const hauntedWasteland = new HauntedWasteland(input, false);
+  expect(hauntedWasteland.countToZZZ).toEqual(15989);
 });

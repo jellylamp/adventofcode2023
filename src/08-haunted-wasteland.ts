@@ -1,28 +1,28 @@
-export class Coordinates {
-    constructor(left: string, right: string) {
-        this._left = left;
-        this._right = right;
-    }
-    private _left: string;
-    private _right: string;
+class CoordinatesGraph {
+  private graph;
 
+  constructor() {
+    this.graph = {};
+  }
 
-    get left(): string {
-        return this._left;
-    }
+  addCoordinate(id, L, R, endsWithZ, endsWithA) {
+    this.graph[id] = { L, R, endsWithZ, endsWithA };
+  }
 
-    set left(value: string) {
-        this._left = value;
-    }
+  move(currentLocation, direction, shouldGhostMove) {
+    const targetLocation = this.graph[currentLocation][direction] || currentLocation;
 
-    get right(): string {
-        return this._right;
+    if (shouldGhostMove) {
+      return { location: targetLocation, endsWithZ: this.graph[targetLocation].endsWithZ };
     }
+    return targetLocation;
+  }
 
-    set right(value: string) {
-        this._right = value;
-    }
+  getNodesEndingWithA() {
+    return Object.keys(this.graph).filter(node => this.graph[node].endsWithA);
+  }
 }
+
 
 export class HauntedWasteland {
     get countToZZZ(): number {
@@ -33,15 +33,25 @@ export class HauntedWasteland {
         this._countToZZZ = value;
     }
 
-    private map = {};
+    private graph;
     private _countToZZZ = 0;
-    private startingLocation = '';
+    private startingLocation = 'AAA';
     private runningLocation = '';
+    private runningList = [];
+    private shouldGhostMove;
 
-    constructor(input: string) {
-        const inputList = input.split(/\n\s*\n/);
-        this.buildMap(inputList[1].split('\n'));
-        this.loopThroughInstructionsAndCount(inputList[0])
+    constructor(input: string, shouldGhostMove) {
+      const inputList = input.split(/\n\s*\n/);
+      this.graph = new CoordinatesGraph();
+      this.buildGraph(inputList[1].split('\n'));
+
+      this.shouldGhostMove = shouldGhostMove;
+
+      if (shouldGhostMove) {
+        this.loopThroughInstructionsAndCountToAllZs(inputList[0]);
+      } else {
+        this.loopThroughInstructionsAndCount(inputList[0]);
+      }
     }
 
     loopThroughInstructionsAndCount(directionString) {
@@ -49,6 +59,7 @@ export class HauntedWasteland {
 
         let zzzWasFound = false;
         this.runningLocation = this.startingLocation;
+
         while (!zzzWasFound) {
             zzzWasFound = this.loopThroughDirections(directionArr);
         }
@@ -58,37 +69,67 @@ export class HauntedWasteland {
         let wasFound = false;
 
         directionArr.forEach(direction => {
-            if (this.runningLocation === 'ZZZ') {
+           if (this.runningLocation === 'ZZZ') {
                 wasFound = true;
                 return;
             }
-            this._countToZZZ += 1;
-
-            if (direction === 'L') {
-                this.runningLocation = this.map[this.runningLocation].left;
-            } else {
-                this.runningLocation = this.map[this.runningLocation].right;
-            }
+            this.countToZZZ += 1;
+            this.runningLocation = this.graph.move(this.runningLocation, direction);
         });
         return wasFound;
     }
 
-    buildMap(inputArr) {
+  loopThroughInstructionsAndCountToAllZs(directionString) {
+    const directionArr = directionString.split('');
 
-        // build out a map of coordinates
-        inputArr.forEach(coordLine => {
-            const matches = coordLine.match(/(\w+)\s*=\s*\(([\w\s,]+)\)/);
-            const characterList = matches[2].replace(/\s/g, '').split(',');
-            const id = matches[1];
-            const left = characterList[0];
-            const right = characterList[1];
+    let allZsWereFound = false;
+    this.runningList = this.graph.getNodesEndingWithA();
 
-            // set initial location
-            if (this.startingLocation === '') {
-               this.startingLocation = id;
-            }
-
-            this.map[id] = new Coordinates(left, right);
-        });
+    while (!allZsWereFound) {
+      allZsWereFound = this.loopThroughDirectionsWithRunningList(directionArr);
     }
+  }
+
+  private loopThroughDirectionsWithRunningList(directionArr: string[]) {
+    let allNodesEndWithZ = false;
+
+    while (directionArr.length > 0 && !allNodesEndWithZ) {
+      allNodesEndWithZ = true;
+
+      // Ensure this.runningList is an array of strings
+      if (this.runningList.every((node: string) => typeof node === 'string')) {
+        this.runningList.forEach((node: string) => {
+          const direction = directionArr.shift(); // Get the next direction
+          this.runningLocation[node] = this.graph.move(this.runningLocation[node], direction);
+
+          if (!this.runningLocation[node].endsWith('Z')) {
+            allNodesEndWithZ = false;
+          }
+        });
+      } else {
+        console.error('this.runningList is not a valid array of strings:', this.runningList);
+      }
+
+      this.countToZZZ += 1;
+    }
+
+    return allNodesEndWithZ;
+  }
+
+
+  buildGraph(inputArr) {
+
+    // build out a map of coordinates
+    inputArr.forEach(coordLine => {
+      const matches = coordLine.match(/(\w+)\s*=\s*\(([\w\s,]+)\)/);
+      const characterList = matches[2].replace(/\s/g, '').split(',');
+      const id = matches[1];
+      const left = characterList[0];
+      const right = characterList[1];
+      const endsWithZ = id.endsWith('Z');
+      const endsWithA = id.endsWith('A');
+
+      this.graph.addCoordinate(id, left, right, endsWithZ, endsWithA);
+    });
+  }
 }
