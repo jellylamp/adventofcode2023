@@ -32,6 +32,21 @@ ZZZ = (ZZZ, ZZZ)`;
   expect(hauntedWasteland.countToZZZ).toEqual(2);
 });
 
+test("Day 8 puzzle b sample", () => {
+  const input = `LR
+
+11A = (11B, XXX)
+11B = (XXX, 11Z)
+11Z = (11B, XXX)
+22A = (22B, XXX)
+22B = (22C, 22C)
+22C = (22Z, 22Z)
+22Z = (22B, 22B)
+XXX = (XXX, XXX)`;
+
+  const hauntedWasteland = new HauntedWasteland(input, true);
+  expect(hauntedWasteland.countToZZZ).toEqual(6);
+});
 
 test("Day 8 puzzle input sample", () => {
   const input = `LRLRRLLRRLRRRLRLRRRLLRRLLLLRRRLRRRLRRLRRLRRRLRRRLLRRLRLRRLRRRLLLRRLRRLLRLLRRRLRRRLLRLRRRLRLLRRLLLRLRRRLRRRLRRRLLRLRRRLLRRLRLRLLRRLRRRLRRLRLLRLRRRLRRLRLRLRRLRRRLRRRLRRRLRRLRRRLLRRLRRLLRRRLLRLRLRLRLLLRRLRLRRLRRLRRLRRLRRRLRRRLRLRRRLRLRRRLRRLRLLRLRRLRLRLLLRLLLRRRLRRLLLRLRRRR
@@ -783,6 +798,9 @@ LBV = (FFL, KHB)
 XXS = (VXF, BGH)
 GMH = (GGS, KLG)`;
 
-  const hauntedWasteland = new HauntedWasteland(input, false);
-  expect(hauntedWasteland.countToZZZ).toEqual(15989);
+  // const hauntedWasteland = new HauntedWasteland(input, false);
+  // expect(hauntedWasteland.countToZZZ).toEqual(15989);
+
+  const hauntedWasteland = new HauntedWasteland(input, true);
+  expect(hauntedWasteland.countToZZZ).toEqual(6);
 });

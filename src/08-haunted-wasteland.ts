@@ -74,7 +74,7 @@ export class HauntedWasteland {
                 return;
             }
             this.countToZZZ += 1;
-            this.runningLocation = this.graph.move(this.runningLocation, direction);
+            this.runningLocation = this.graph.move(this.runningLocation, direction, false);
         });
         return wasFound;
     }
@@ -92,30 +92,33 @@ export class HauntedWasteland {
 
   private loopThroughDirectionsWithRunningList(directionArr: string[]) {
     let allNodesEndWithZ = false;
+    let directionIndex = 0;
 
-    while (directionArr.length > 0 && !allNodesEndWithZ) {
+    while (directionIndex < directionArr.length && !allNodesEndWithZ) {
       allNodesEndWithZ = true;
 
-      // Ensure this.runningList is an array of strings
-      if (this.runningList.every((node: string) => typeof node === 'string')) {
-        this.runningList.forEach((node: string) => {
-          const direction = directionArr.shift(); // Get the next direction
-          this.runningLocation[node] = this.graph.move(this.runningLocation[node], direction);
+      const nextNodes = [];
+      const direction = directionArr[directionIndex];
 
-          if (!this.runningLocation[node].endsWith('Z')) {
-            allNodesEndWithZ = false;
-          }
-        });
-      } else {
-        console.error('this.runningList is not a valid array of strings:', this.runningList);
-      }
+      this.runningList.forEach((node: string) => {
+        // Get the direction without modifying the array
+        const moveResult = this.graph.move(node, direction, true);
+
+        if (!moveResult.endsWithZ) {
+          allNodesEndWithZ = false;
+        }
+        nextNodes.push(moveResult.location);
+      });
+      directionIndex += 1; // Move to the next direction
+
+      // Update the running list for the next iteration
+      this.runningList = nextNodes;
 
       this.countToZZZ += 1;
     }
 
     return allNodesEndWithZ;
   }
-
 
   buildGraph(inputArr) {
 
