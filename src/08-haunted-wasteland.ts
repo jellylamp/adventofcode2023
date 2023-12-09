@@ -25,6 +25,9 @@ class CoordinatesGraph {
 
 
 export class HauntedWasteland {
+  get leastCommonMultipleResult(): number {
+    return this._leastCommonMultipleResult;
+  }
     get countToZZZ(): number {
         return this._countToZZZ;
     }
@@ -39,6 +42,8 @@ export class HauntedWasteland {
     private runningLocation = '';
     private runningList = [];
     private shouldGhostMove;
+    private patternList = [];
+    private _leastCommonMultipleResult = 0;
 
     constructor(input: string, shouldGhostMove) {
       const inputList = input.split(/\n\s*\n/);
@@ -48,7 +53,7 @@ export class HauntedWasteland {
       this.shouldGhostMove = shouldGhostMove;
 
       if (shouldGhostMove) {
-        this.loopThroughInstructionsAndCountToAllZs(inputList[0]);
+        this.loopThroughInstructionsAndCountToFirstZs(inputList[0]);
       } else {
         this.loopThroughInstructionsAndCount(inputList[0]);
       }
@@ -79,7 +84,7 @@ export class HauntedWasteland {
         return wasFound;
     }
 
-  loopThroughInstructionsAndCountToAllZs(directionString) {
+  loopThroughInstructionsAndCountToFirstZs(directionString) {
     const directionArr = directionString.split('');
 
     let allZsWereFound = false;
@@ -88,6 +93,31 @@ export class HauntedWasteland {
     while (!allZsWereFound) {
       allZsWereFound = this.loopThroughDirectionsWithRunningList(directionArr);
     }
+
+    // ok we found all of the first times we end with z and updated pattern list
+    this.calculateLeastCommonMultipleFromPattern();
+  }
+
+  calculateLeastCommonMultipleFromPattern() {
+    let result = this.patternList[0];
+    for (let i = 1; i < this.patternList.length; i++) {
+      result = this.leastCommonMultiple(result, this.patternList[i]);
+    }
+
+    this._leastCommonMultipleResult = result;
+  }
+
+  leastCommonMultiple(a, b) {
+    return Math.abs(a * b) / this.greatestCommonDenominator(a, b);
+  }
+
+  greatestCommonDenominator(a, b) {
+    while (b !== 0) {
+      const temp = b;
+      b = a % b;
+      a = temp;
+    }
+    return a;
   }
 
   private loopThroughDirectionsWithRunningList(directionArr: string[]) {
@@ -95,10 +125,15 @@ export class HauntedWasteland {
     let directionIndex = 0;
 
     while (directionIndex < directionArr.length && !allNodesEndWithZ) {
+      this.countToZZZ += 1;
       allNodesEndWithZ = true;
 
       const nextNodes = [];
       const direction = directionArr[directionIndex];
+
+      if (this.runningList.length === 0) {
+        allNodesEndWithZ = true;
+      }
 
       this.runningList.forEach((node: string) => {
         // Get the direction without modifying the array
@@ -106,15 +141,15 @@ export class HauntedWasteland {
 
         if (!moveResult.endsWithZ) {
           allNodesEndWithZ = false;
+          nextNodes.push(moveResult.location);
+        } else {
+          this.patternList.push(this.countToZZZ);
         }
-        nextNodes.push(moveResult.location);
       });
       directionIndex += 1; // Move to the next direction
 
       // Update the running list for the next iteration
       this.runningList = nextNodes;
-
-      this.countToZZZ += 1;
     }
 
     return allNodesEndWithZ;
