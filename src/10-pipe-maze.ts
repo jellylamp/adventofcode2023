@@ -14,13 +14,18 @@ export class PipeMaze {
   startingLocationColumn = 0;
   private _longestPath = 0;
   private longestPathSymbols = [];
+  private secondLongestPathSymbols = [];
+  private combinedPathSymbols = [];
   private _insideCoords = 0;
 
   constructor(input: string) {
     this.constructGrid(input.split('\n'));
-    this.longestPathSymbols = this.traverseMazeBFS(this.startingLocationRow, this.startingLocationColumn);
+    const returnedPaths = this.traverseMazeBFS(this.startingLocationRow, this.startingLocationColumn);
+    this.longestPathSymbols = returnedPaths.longestPath;
+    this.secondLongestPathSymbols = returnedPaths.secondLongestPath.slice().reverse();;
     this._longestPath = this.longestPathSymbols.length;
-    this._insideCoords = this.drawPolygonAndListCoords(this.longestPathSymbols).length;
+    this.combinedPathSymbols = this.longestPathSymbols.concat(this.secondLongestPathSymbols);
+    this._insideCoords = this.drawPolygonAndListCoords(this.combinedPathSymbols).length;
   }
 
   constructGrid(inputList) {
@@ -43,12 +48,17 @@ export class PipeMaze {
     const visited = new Set();
 
     let longestPath = [];
+    let secondLongestPath = [];
 
     while (queue.length > 0) {
       const [row, col, pathLen, path] = queue.shift();
 
-      if (pathLen > longestPath.length) {
-        longestPath = path.slice(); // Copy the current path
+      // Update longest and second-longest paths
+      if (pathLen >= longestPath.length) {
+        secondLongestPath = longestPath.slice(); // Update second longest path
+        longestPath = path.slice(); // Update longest path
+      } else if (pathLen > secondLongestPath.length) {
+        secondLongestPath = path.slice(); // Update second longest path
       }
 
       if (visited.has(this.getKey(row, col))) {
@@ -70,7 +80,10 @@ export class PipeMaze {
       }
     }
 
-    return longestPath;
+    return {
+      longestPath: longestPath,
+      secondLongestPath: secondLongestPath,
+    };
   }
 
   getKey(row, col) {
@@ -185,6 +198,10 @@ export class PipeMaze {
     }
   }
 
+  // used this reddit comment as a hint:
+  // Maybe not the most efficient solution, but you can imagine the loop as a polygon.
+  // Then you just need to test for every point that is not part of the loop path, whether it is inside or outside the polygon:
+  // https://en.wikipedia.org/wiki/Point_in_polygon
   drawPolygonAndListCoords(path: { symbol: string, coordinates: number[] }[]) {
     const { window } = new JSDOM();
     const document = window.document;

@@ -182,7 +182,7 @@ L-|JJ-L-FJJ.FJLFLJL7JJ---|J|-|FLF-|7.FLFF-JFL7L7|FJJ||F-7--|7.|-J.LL.L-77..|.L7.
   const pipeMaze = new PipeMaze(input);
   expect(pipeMaze.longestPath).toEqual(6768);
 
-  expect(pipeMaze.insideCoords).toEqual(4);
+  expect(pipeMaze.insideCoords).toEqual(351);
 });
 
 test("Day 10 puzzle part b easy", () => {
@@ -197,5 +197,5 @@ test("Day 10 puzzle part b easy", () => {
 ..........`;
 
   const pipeMaze = new PipeMaze(input);
-  expect(pipeMaze.insideCoords).toEqual(4);
+  expect(pipeMaze.insideCoords).toEqual(351);
 });
