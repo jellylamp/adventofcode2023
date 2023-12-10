@@ -1,9 +1,5 @@
 // @ts-ignore see https://github.com/jest-community/jest-extended#setup
 import * as matchers from "jest-extended";
-import {BoatRacing} from "./06-boat-racing";
-import {CamelPoker} from "./07-camel-poker";
-import {HauntedWasteland} from "./08-haunted-wasteland";
-import {Oasis} from "./09-oasis";
 import {PipeMaze} from "./10-pipe-maze";
 
 expect.extend(matchers);
@@ -184,6 +180,5 @@ L-|JJ-L-FJJ.FJLFLJL7JJ---|J|-|FLF-|7.FLFF-JFL7L7|FJJ||F-7--|7.|-J.LL.L-77..|.L7.
 |JL.L|-L|J-L--..F.77--|JLJ-LLJ-7JL.|J.L|.|JLJ.|LJJJ.LJLJ7LFJJLF--|LF-J..7.L-.7L7J.J-7JJFJ-L7J|J-LJ7--J-7JJ.J.LLL---7LLJ.--J-JJ-L-JJ-|LF--JLJ`;
 
   const pipeMaze = new PipeMaze(input);
-  // too low
-  expect(pipeMaze.longestPath).toEqual(6762);
+  expect(pipeMaze.longestPath).toEqual(6768);
 });

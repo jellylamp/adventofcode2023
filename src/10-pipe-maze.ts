@@ -1,4 +1,3 @@
-const Array2D = require('array2d');
 
 export class PipeMaze {
   get longestPath(): number {
@@ -32,39 +31,39 @@ export class PipeMaze {
     }
   }
 
-traverseMazeBFS(startRow, startCol) {
+  traverseMazeBFS(startRow, startCol) {
     let queue = [[startRow, startCol, 0, []]]; // [row, col, pathLen, path]
     const visited = new Set();
 
     let longestPath = [];
 
     while (queue.length > 0) {
-        const [row, col, pathLen, path] = queue.shift();
+      const [row, col, pathLen, path] = queue.shift();
 
-        if (pathLen > longestPath.length) {
-            longestPath = path.slice(); // Copy the current path
+      if (pathLen > longestPath.length) {
+        longestPath = path.slice(); // Copy the current path
+      }
+
+      if (visited.has(this.getKey(row, col))) {
+        continue;
+      }
+
+      visited.add(this.getKey(row, col));
+
+      const neighbors = this.getOrthogonalNeighbors(row, col);
+
+      for (const [nextRow, nextCol] of neighbors) {
+        if (!visited.has(this.getKey(nextRow, nextCol))) {
+            // Add path length
+            const nextPathLen = pathLen + 1;
+            const nextPath = path.concat(this.grid[nextRow][nextCol]); // Store values in the path
+            queue.push([nextRow, nextCol, nextPathLen, nextPath]);
         }
-
-        if (visited.has(this.getKey(row, col))) {
-            continue;
-        }
-
-        visited.add(this.getKey(row, col));
-
-        const neighbors = this.getOrthogonalNeighbors(row, col);
-
-        for (const [nextRow, nextCol] of neighbors) {
-            if (!visited.has(this.getKey(nextRow, nextCol))) {
-                // Add path length
-                const nextPathLen = pathLen + 1;
-                const nextPath = path.concat(this.grid[nextRow][nextCol]); // Store values in the path
-                queue.push([nextRow, nextCol, nextPathLen, nextPath]);
-            }
-        }
+      }
     }
 
     return longestPath;
-}
+  }
 
   getKey(row, col) {
     return `${row}-${col}`
@@ -118,21 +117,20 @@ traverseMazeBFS(startRow, startCol) {
       return false;
     }
 
-    // everything matches s except periods
-    if (currentSymbol === 'S') {
-      return true;
-    }
-
     // Check if the two pipe shapes fit together
     switch (currentSymbol) {
       case '|':
-        if (neighborDirection === 'N' || neighborDirection == 'S') {
-          return strToCheck === '|' || strToCheck === '7' || strToCheck === 'F' || strToCheck === 'L' || strToCheck === 'J';
+        if (neighborDirection === 'N') {
+          return strToCheck === '|' || strToCheck === '7' || strToCheck === 'F';
+        } else if (neighborDirection == 'S') {
+          return strToCheck === '|' || strToCheck === 'L' || strToCheck === 'J';
         }
         return false;
       case '-':
-        if (neighborDirection === 'E' || neighborDirection == 'W') {
-          return strToCheck === '-' || strToCheck === '7' || strToCheck === 'J' || strToCheck === 'F' || strToCheck === 'L';
+        if (neighborDirection === 'E') {
+          return strToCheck === '-' || strToCheck === '7' || strToCheck === 'J';
+        } else if (neighborDirection == 'W') {
+          return strToCheck === '-' || strToCheck === 'F' || strToCheck === 'L';
         }
         return false;
       case 'L':
@@ -161,6 +159,17 @@ traverseMazeBFS(startRow, startCol) {
           return strToCheck === 'J' || strToCheck === 'L' || strToCheck === '|';
         } else if (neighborDirection === 'E') {
           return strToCheck === '-' || strToCheck === '7' || strToCheck === 'J';
+        }
+        return false;
+      case 'S':
+        if (neighborDirection === 'N') {
+          return strToCheck === '|' || strToCheck === '7' || strToCheck === 'F';
+        } else if (neighborDirection === 'S') {
+          return strToCheck === '|' || strToCheck === 'L' || strToCheck === 'J';
+        } else if (neighborDirection === 'E') {
+          return strToCheck === '-' || strToCheck === '7' || strToCheck === 'J';
+        } else if (neighborDirection === 'W') {
+          return strToCheck === '-' || strToCheck === 'L' || strToCheck === 'F';
         }
         return false;
       default:
