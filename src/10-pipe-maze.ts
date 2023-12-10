@@ -12,8 +12,7 @@ export class PipeMaze {
 
   constructor(input: string) {
     this.constructGrid(input.split('\n'));
-    this._longestPath = this.traverseThroughMaze(this.startingLocationRow, this.startingLocationColumn, 0);
-    this._longestPath = Math.floor(this.longestPath / 2);
+    this._longestPath = this.traverseMazeBFS(this.startingLocationRow, this.startingLocationColumn);
   }
 
   constructGrid(inputList) {
@@ -31,31 +30,46 @@ export class PipeMaze {
     }
   }
 
-  traverseThroughMaze(row, column, currentLength, visitedSet = new Set()) {
-    const visitedKey = `${row}-${column}`;
+  traverseMazeBFS(startRow, startCol) {
+    let queue = [[startRow, startCol, 0]]
+    const visited = new Set();
 
-    if (visitedSet.has(visitedKey)) {
-        return currentLength;
+    let longest = 0;
+
+    while (queue.length > 0) {
+
+      // Pop front
+      const [row, col, pathLen] = queue.shift();
+
+      longest = Math.max(longest, pathLen);
+
+      if (visited.has(this.getKey(row, col))) {
+        continue
+      }
+
+      visited.add(this.getKey(row, col));
+
+      const neighbors = this.getOrthogonalNeighbors(row, col);
+
+      for (const [nextRow, nextCol] of neighbors) {
+         if (!visited.has(this.getKey(nextRow, nextCol))) {
+             // Add path length
+             const nextPathLen = pathLen + 1;
+             queue.push([nextRow, nextCol, nextPathLen])
+         }
+      }
+
     }
-    visitedSet.add(visitedKey);
 
-    // get orthogonal neighbors
-    let orthogonals = this.getOrthogonalNeighbors(this.grid, row, column);
-    let maxLength = currentLength;
+    return longest;
 
-    // continue search
-    for (const neighbor of orthogonals) {
-      const [nextRow, nextColumn] = neighbor;
-      const nextLength = this.traverseThroughMaze(nextRow, nextColumn, currentLength + 1, visitedSet);
-
-      // Update maxLength if the new path is longer
-      maxLength = Math.max(maxLength, nextLength);
-    }
-
-    return maxLength;
   }
 
-  getOrthogonalNeighbors(grid, row, col) {
+  getKey(row, col) {
+    return `${row}-${col}`
+  }
+
+  getOrthogonalNeighbors(row, col) {
     const neighbors = [];
     const currentSymbol = this.grid[row][col];
 
@@ -69,7 +83,7 @@ export class PipeMaze {
     }
 
     // Check bottom neighbor
-    if (row < grid.length - 1) {
+    if (row < this.grid.length - 1) {
       const neighborSymbol = this.grid[row + 1][col];
       const doesIntersect = this.doesSnapTogether(currentSymbol, neighborSymbol, 'S');
       if (doesIntersect) {
@@ -87,7 +101,7 @@ export class PipeMaze {
     }
 
     // Check right neighbor
-    if (col < grid[0].length - 1) {
+    if (col < this.grid[0].length - 1) {
       const neighborSymbol = this.grid[row][col + 1];
       const doesIntersect = this.doesSnapTogether(currentSymbol, neighborSymbol, 'E');
       if (doesIntersect) {
@@ -99,8 +113,12 @@ export class PipeMaze {
   }
 
   doesSnapTogether(currentSymbol, strToCheck, neighborDirection) {
-    // everything matches s
-    if (strToCheck === 'S' || currentSymbol === 'S') {
+    if (strToCheck === '.') {
+      return false;
+    }
+
+    // everything matches s except periods
+    if (currentSymbol === 'S') {
       return true;
     }
 

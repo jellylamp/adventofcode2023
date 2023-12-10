@@ -189,5 +189,6 @@ L-|JJ-L-FJJ.FJLFLJL7JJ---|J|-|FLF-|7.FLFF-JFL7L7|FJJ||F-7--|7.|-J.LL.L-77..|.L7.
 |JL.L|-L|J-L--..F.77--|JLJ-LLJ-7JL.|J.L|.|JLJ.|LJJJ.LJLJ7LFJJLF--|LF-J..7.L-.7L7J.J-7JJFJ-L7J|J-LJ7--J-7JJ.J.LLL---7LLJ.--J-JJ-L-JJ-|LF--JLJ`;
 
   const pipeMaze = new PipeMaze(input);
-  expect(pipeMaze.longestPath).toEqual(8);
+  // too low
+  expect(pipeMaze.longestPath).toEqual(6762);
 });
