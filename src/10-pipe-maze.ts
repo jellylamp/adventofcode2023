@@ -1,5 +1,10 @@
+import { JSDOM } from 'jsdom';
+import { createCanvas } from 'canvas';
 
 export class PipeMaze {
+  get insideCoords(): number {
+    return this._insideCoords;
+  }
   get longestPath(): number {
     return this._longestPath;
   }
@@ -9,11 +14,13 @@ export class PipeMaze {
   startingLocationColumn = 0;
   private _longestPath = 0;
   private longestPathSymbols = [];
+  private _insideCoords = 0;
 
   constructor(input: string) {
     this.constructGrid(input.split('\n'));
     this.longestPathSymbols = this.traverseMazeBFS(this.startingLocationRow, this.startingLocationColumn);
     this._longestPath = this.longestPathSymbols.length;
+    this._insideCoords = this.drawPolygonAndListCoords(this.longestPathSymbols).length;
   }
 
   constructGrid(inputList) {
@@ -54,10 +61,11 @@ export class PipeMaze {
 
       for (const [nextRow, nextCol] of neighbors) {
         if (!visited.has(this.getKey(nextRow, nextCol))) {
-            // Add path length
-            const nextPathLen = pathLen + 1;
-            const nextPath = path.concat(this.grid[nextRow][nextCol]); // Store values in the path
-            queue.push([nextRow, nextCol, nextPathLen, nextPath]);
+          // Add path length
+          const nextPathLen = pathLen + 1;
+          const nextSymbol = this.grid[nextRow][nextCol];
+          const nextPath = path.concat([{ symbol: nextSymbol, coordinates: [nextRow, nextCol] }]);
+          queue.push([nextRow, nextCol, nextPathLen, nextPath]);
         }
       }
     }
@@ -175,5 +183,48 @@ export class PipeMaze {
       default:
         return false;
     }
+  }
+
+  drawPolygonAndListCoords(path: { symbol: string, coordinates: number[] }[]) {
+    const { window } = new JSDOM();
+    const document = window.document;
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    // Draw the path
+    context.beginPath();
+
+    // set starting location
+    context.moveTo(this.startingLocationRow, this.startingLocationColumn);
+
+    for (const step of path) {
+      const [x, y] = step.coordinates;
+      if (step === path[0]) {
+        context.moveTo(x, y);
+      } else {
+        context.lineTo(x, y);
+      }
+    }
+    context.closePath();
+
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    const insideCoordinates = [];
+
+    for (let x = 0; x < canvasWidth; x++) {
+      for (let y = 0; y < canvasHeight; y++) {
+        if (context.isPointInPath(x, y) && !this.isCoordinateOnPath(x, y, path)) {
+          const helperSymbol = this.grid[x][y];
+          insideCoordinates.push([x, y]);
+        }
+      }
+    }
+
+    return insideCoordinates;
+  }
+
+  isCoordinateOnPath(x, y, path) {
+    // Check if the coordinate (x, y) is part of the given path
+    return path.some(step => step.coordinates[0] === x && step.coordinates[1] === y);
   }
 }

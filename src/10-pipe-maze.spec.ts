@@ -4,7 +4,7 @@ import {PipeMaze} from "./10-pipe-maze";
 
 expect.extend(matchers);
 
-test("Day 8 puzzle a small simplified loop", () => {
+test("Day 10 puzzle a small simplified loop", () => {
   const input = `.....
 .S-7.
 .|.|.
@@ -15,7 +15,7 @@ test("Day 8 puzzle a small simplified loop", () => {
   expect(pipeMaze.longestPath).toEqual(4);
 });
 
-test("Day 8 puzzle a big simplified loop", () => {
+test("Day 10 puzzle a big simplified loop", () => {
   const input = `..F7.
 .FJ|.
 SJ.L7
@@ -26,7 +26,7 @@ LJ...`;
   expect(pipeMaze.longestPath).toEqual(8);
 });
 
-test("Day 8 puzzle a big complex loop", () => {
+test("Day 10 puzzle a big complex loop", () => {
   const input = `7-F7-
 .FJ|7
 SJLL7
@@ -37,7 +37,7 @@ LJ.LJ`;
   expect(pipeMaze.longestPath).toEqual(8);
 });
 
-test("Day 8 puzzle a input", () => {
+test("Day 10 puzzle a input", () => {
   const input = `J7F--7-|7FJ.FF|.FJ77.FJFL7FFF-J7F7-J-77F|-|7LL7.|FJ7F|JF|.FLF7-FF--7.-J.7-FF7F-77.LJFJ-FF.F|-F----77F77.JF|F|7F.|7-FJ-F777..F-7|77F7FFFF7FJ7
 |L7.LL.|7J.F-.|-|JJF7-F7.|-JJ.|LLL.|7|JF|7|F7-FF7-.FLJLJL-.||LF|JLFFJLJ-7-JL77-7FJ-F-J.FJ-.|FL---7L7-FJ..FF-|-J-L|-||.L77-7-J.L-FJFL|-7-FJJ.
 |.|FL7||F--JJ|-.JJ.J.LJ|7|J---J..L|--|F-|7F|FF-J|---J.F7J.F|7JL|F7JJ|.L-J|.7|F-JJ.FF7-J||--|J.|.F|FJ7|F-7-JJL-J7FL7F7FF.7JLLFFLJL--7|7JL|J.L
@@ -181,4 +181,21 @@ L-|JJ-L-FJJ.FJLFLJL7JJ---|J|-|FLF-|7.FLFF-JFL7L7|FJJ||F-7--|7.|-J.LL.L-77..|.L7.
 
   const pipeMaze = new PipeMaze(input);
   expect(pipeMaze.longestPath).toEqual(6768);
+
+  expect(pipeMaze.insideCoords).toEqual(4);
+});
+
+test("Day 10 puzzle part b easy", () => {
+  const input = `..........
+.S------7.
+.|F----7|.
+.||OOOO||.
+.||OOOO||.
+.|L-7F-J|.
+.|II||II|.
+.L--JL--J.
+..........`;
+
+  const pipeMaze = new PipeMaze(input);
+  expect(pipeMaze.insideCoords).toEqual(4);
 });
