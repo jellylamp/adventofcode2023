@@ -42,23 +42,10 @@ export class PipeMaze {
 
     // get orthogonal neighbors
     let orthogonals = this.getOrthogonalNeighbors(this.grid, row, column);
-    const currentSymbol = this.grid[row][column];
     let maxLength = currentLength;
 
     // continue search
     for (const neighbor of orthogonals) {
-      const neighborSymbol = this.grid[neighbor[0]][neighbor[1]];
-      const directionMovingTo = this.getDirection(row, column ,neighbor[0], neighbor[1]);
-      const doesIntersect = this.doesSnapTogether(currentSymbol, neighborSymbol, directionMovingTo);
-
-      if (!doesIntersect) {
-        continue;
-      }
-
-      if (neighborSymbol === '.') {
-        continue;
-      }
-
       const [nextRow, nextColumn] = neighbor;
       const nextLength = this.traverseThroughMaze(nextRow, nextColumn, currentLength + 1, visitedSet);
 
@@ -71,25 +58,42 @@ export class PipeMaze {
 
   getOrthogonalNeighbors(grid, row, col) {
     const neighbors = [];
+    const currentSymbol = this.grid[row][col];
 
     // Check top neighbor
     if (row > 0) {
+      const neighborSymbol = this.grid[row - 1][col];
+      const doesIntersect = this.doesSnapTogether(currentSymbol, neighborSymbol, 'N');
+      if (doesIntersect) {
         neighbors.push([row - 1, col]);
+      }
     }
 
     // Check bottom neighbor
     if (row < grid.length - 1) {
+      const neighborSymbol = this.grid[row + 1][col];
+      const doesIntersect = this.doesSnapTogether(currentSymbol, neighborSymbol, 'S');
+      if (doesIntersect) {
         neighbors.push([row + 1, col]);
+      }
     }
 
     // Check left neighbor
     if (col > 0) {
+      const neighborSymbol = this.grid[row][col - 1];
+      const doesIntersect = this.doesSnapTogether(currentSymbol, neighborSymbol, 'W');
+      if (doesIntersect) {
         neighbors.push([row, col - 1]);
+      }
     }
 
     // Check right neighbor
     if (col < grid[0].length - 1) {
+      const neighborSymbol = this.grid[row][col + 1];
+      const doesIntersect = this.doesSnapTogether(currentSymbol, neighborSymbol, 'E');
+      if (doesIntersect) {
         neighbors.push([row, col + 1]);
+      }
     }
 
     return neighbors;
