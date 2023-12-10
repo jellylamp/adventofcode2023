@@ -26,11 +26,6 @@ SJ.L7
 |F--J
 LJ...`;
 
-// ..F7.
-// .FJ|.
-// SJ.L7
-// |F--J
-// LJ...
   const pipeMaze = new PipeMaze(input);
   expect(pipeMaze.longestPath).toEqual(8);
 });

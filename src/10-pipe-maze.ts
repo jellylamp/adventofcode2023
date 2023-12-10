@@ -9,10 +9,12 @@ export class PipeMaze {
   startingLocationRow = 0;
   startingLocationColumn = 0;
   private _longestPath = 0;
+  private longestPathSymbols = [];
 
   constructor(input: string) {
     this.constructGrid(input.split('\n'));
-    this._longestPath = this.traverseMazeBFS(this.startingLocationRow, this.startingLocationColumn);
+    this.longestPathSymbols = this.traverseMazeBFS(this.startingLocationRow, this.startingLocationColumn);
+    this._longestPath = this.longestPathSymbols.length;
   }
 
   constructGrid(inputList) {
@@ -30,40 +32,39 @@ export class PipeMaze {
     }
   }
 
-  traverseMazeBFS(startRow, startCol) {
-    let queue = [[startRow, startCol, 0]]
+traverseMazeBFS(startRow, startCol) {
+    let queue = [[startRow, startCol, 0, []]]; // [row, col, pathLen, path]
     const visited = new Set();
 
-    let longest = 0;
+    let longestPath = [];
 
     while (queue.length > 0) {
+        const [row, col, pathLen, path] = queue.shift();
 
-      // Pop front
-      const [row, col, pathLen] = queue.shift();
+        if (pathLen > longestPath.length) {
+            longestPath = path.slice(); // Copy the current path
+        }
 
-      longest = Math.max(longest, pathLen);
+        if (visited.has(this.getKey(row, col))) {
+            continue;
+        }
 
-      if (visited.has(this.getKey(row, col))) {
-        continue
-      }
+        visited.add(this.getKey(row, col));
 
-      visited.add(this.getKey(row, col));
+        const neighbors = this.getOrthogonalNeighbors(row, col);
 
-      const neighbors = this.getOrthogonalNeighbors(row, col);
-
-      for (const [nextRow, nextCol] of neighbors) {
-         if (!visited.has(this.getKey(nextRow, nextCol))) {
-             // Add path length
-             const nextPathLen = pathLen + 1;
-             queue.push([nextRow, nextCol, nextPathLen])
-         }
-      }
-
+        for (const [nextRow, nextCol] of neighbors) {
+            if (!visited.has(this.getKey(nextRow, nextCol))) {
+                // Add path length
+                const nextPathLen = pathLen + 1;
+                const nextPath = path.concat(this.grid[nextRow][nextCol]); // Store values in the path
+                queue.push([nextRow, nextCol, nextPathLen, nextPath]);
+            }
+        }
     }
 
-    return longest;
-
-  }
+    return longestPath;
+}
 
   getKey(row, col) {
     return `${row}-${col}`
