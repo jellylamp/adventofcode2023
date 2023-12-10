@@ -4,8 +4,7 @@ export class PipeMaze {
   get longestPath(): number {
     return this._longestPath;
   }
-  columns = [];
-  rows = [];
+
   grid = [];
   startingLocationRow = 0;
   startingLocationColumn = 0;
@@ -147,22 +146,6 @@ export class PipeMaze {
         return false;
       default:
         return false;
-    }
-  }
-
-  getDirection(currentRow, currentCol, neighborRow, neighborCol) {
-    if (currentRow === neighborRow) {
-      if (currentCol < neighborCol) {
-        return 'E';
-      } else if (currentCol > neighborCol) {
-        return 'W';
-      }
-    } else if (currentCol === neighborCol) {
-      if (currentRow < neighborRow) {
-        return 'S';
-      } else if (currentRow > neighborRow) {
-        return 'N';
-      }
     }
   }
 }
