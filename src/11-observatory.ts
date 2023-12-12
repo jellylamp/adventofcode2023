@@ -58,10 +58,7 @@ export class Observatory {
       }
     }
 
-    // 6, 1
-    // 11, 5
-
-    // get absolute value of (11 - 6) + (5 - 1) = 9
+    // get absolute value of (11 - 6) + (5 - 1) = 9 (manhattan distance, apparently)
     let distanceSum = 0;
     this._galaxyCoords.forEach(startingCoord => {
       this._galaxyCoords.forEach(comparisonCoord => {
@@ -86,7 +83,6 @@ export class Observatory {
 
       // Expand the universe! Push grid line twice to handle empty rows
       if (!line.includes('#')) {
-        // horizontalExpanded.push(gridLine);
         this.extraRows.add(index);
       }
 
@@ -112,7 +108,6 @@ export class Observatory {
       if (!hasHash) {
         // Expand the universe vertically
         for (let row = 0; row < horizontalExpanded.length; row++) {
-          // verticalExpanded[row].splice(column + 1 + columnsExpanded, 0, verticalExpanded[row][column + columnsExpanded]);
           this.extraCols.add(column);
         }
         columnsExpanded += 1;
