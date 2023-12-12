@@ -16,8 +16,16 @@ test("Day 8 puzzle a sample", () => {
 .......#..
 #...#.....`;
 
-  const observatory = new Observatory(input);
+  const observatory = new Observatory(input, 1);
   expect(observatory.distanceSum).toEqual(374);
+
+
+  // REPLACED BY NOT DUPLICATED SO SUBTRACT 1 ugh
+  const observatory2 = new Observatory(input, 9);
+  expect(observatory2.distanceSum).toEqual(1030);
+
+  const observatory3 = new Observatory(input, 99);
+  expect(observatory3.distanceSum).toEqual(8410);
 });
 
 test("Day 8 puzzle a input", () => {
@@ -162,6 +170,9 @@ test("Day 8 puzzle a input", () => {
 .........#.....................#.........................................#.............................#.......#............................
 ...#......................#............................#........#......................#...............................#..........#.........`;
 
-  const observatory = new Observatory(input);
+  const observatory = new Observatory(input, 1);
   expect(observatory.distanceSum).toEqual(10422930);
+
+  const observatory2 = new Observatory(input, 999999);
+  expect(observatory2.distanceSum).toEqual(699909023130);
 });

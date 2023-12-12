@@ -25,21 +25,34 @@ export class Observatory {
   private _grid = [];
   private _galaxyCoords = [];
   private _distanceSum = 0;
+  private extraRows = new Set();
+  private extraCols = new Set();
 
-  constructor(input: string) {
+  constructor(input: string, numToAdd: number) {
     const inputArr = input.split('\n');
     this.constructGrid(inputArr);
-    this._distanceSum = this.findEachGalaxy();
+    this._distanceSum = this.findEachGalaxy(numToAdd);
   }
 
-  findEachGalaxy() {
+  findEachGalaxy(numToAdd: number) {
     let count = 1;
 
+    let runningRowAdditions = 0;
     for (let row = 0; row < this._grid.length; row = row + 1) {
+      let runningColAdditions = 0;
+
+      if (this.extraRows.has(row)) {
+        runningRowAdditions += numToAdd;
+      }
+
       for (let col = 0; col < this._grid[0].length; col = col + 1) {
+        if (this.extraCols.has(col)) {
+          runningColAdditions += numToAdd;
+        }
+
         if (this._grid[row][col] === '#') {
           this._grid[row][col] = count;
-          this._galaxyCoords.push(new Coord(row, col));
+          this._galaxyCoords.push(new Coord(row + runningRowAdditions, col + runningColAdditions));
           count += 1;
         }
       }
@@ -52,7 +65,7 @@ export class Observatory {
     let distanceSum = 0;
     this._galaxyCoords.forEach(startingCoord => {
       this._galaxyCoords.forEach(comparisonCoord => {
-        distanceSum += this.getDistance(startingCoord, comparisonCoord);
+          distanceSum += this.getDistance(startingCoord, comparisonCoord);
       });
     });
 
@@ -60,7 +73,7 @@ export class Observatory {
   }
 
   getDistance(a: Coord, b: Coord) {
-    return Math.abs(b.row - a.row) + Math.abs(b.column - a.column);
+    return Math.abs(a.row - b.row) + Math.abs(a.column - b.column);
   }
 
   constructGrid(inputList) {
@@ -73,7 +86,8 @@ export class Observatory {
 
       // Expand the universe! Push grid line twice to handle empty rows
       if (!line.includes('#')) {
-        horizontalExpanded.push(gridLine);
+        // horizontalExpanded.push(gridLine);
+        this.extraRows.add(index);
       }
 
       horizontalExpanded.push(gridLine);
@@ -98,7 +112,8 @@ export class Observatory {
       if (!hasHash) {
         // Expand the universe vertically
         for (let row = 0; row < horizontalExpanded.length; row++) {
-          verticalExpanded[row].splice(column + 1 + columnsExpanded, 0, verticalExpanded[row][column + columnsExpanded]);
+          // verticalExpanded[row].splice(column + 1 + columnsExpanded, 0, verticalExpanded[row][column + columnsExpanded]);
+          this.extraCols.add(column);
         }
         columnsExpanded += 1;
       }
