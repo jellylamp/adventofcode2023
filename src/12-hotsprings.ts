@@ -5,17 +5,26 @@ export class HotSprings {
   }
   private _possibleSum = 0;
 
-  constructor(input: string) {
+  constructor(input: string, isPartB: boolean) {
     const inputArr = input.split('\n');
-    this.findPossibleArrangements(inputArr);
+    this.findPossibleArrangements(inputArr, isPartB);
   }
 
-  findPossibleArrangements(lineArr) {
+  findPossibleArrangements(lineArr, isPartB) {
+    const repetitions = 5;
     lineArr.forEach(line => {
       const lineSplit = line.split(' ');
-      const instruction = lineSplit[0];
-      const arrangements = lineSplit[1].split(',').map(Number);
+      let instruction = lineSplit[0];
+      let arrangements = lineSplit[1];
 
+      // "unfold" it
+      if (isPartB) {
+        instruction = Array.from({ length: repetitions }, (_, index) => instruction + (index < repetitions - 1 ? "?" : "")).join("");
+        arrangements = Array.from({ length: repetitions }, (_, index) => arrangements + (index < repetitions - 1 ? "," : "")).join("");
+        arrangements = arrangements.split(',').map(Number);
+      } else {
+        arrangements = lineSplit[1].split(',').map(Number);
+      }
       this._possibleSum += this.getPossibleArrangements(instruction, arrangements);
     });
   }
