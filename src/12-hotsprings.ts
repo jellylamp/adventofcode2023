@@ -13,33 +13,18 @@ export class HotSprings {
   findPossibleArrangements(lineArr) {
     lineArr.forEach(line => {
       const lineSplit = line.split(' ');
-      const instructions = lineSplit[0];
+      const instruction = lineSplit[0];
       const arrangements = lineSplit[1].split(',').map(Number);
 
-      this._possibleSum += this.getPossibleArrangements(instructions, arrangements);
+      this._possibleSum += this.getPossibleArrangements(instruction, arrangements);
     });
   }
 
   getPossibleArrangements(instructions: string, arrangements: number[]): number {
     if (instructions.includes('?')) {
-      const sortedArrangements = arrangements.sort((a, b) => b - a);
       let possibleCount = 0;
-
-      const consecutiveGroups = instructions.match(/([?#]+)/g);
-
-      // filter out definite numbers to reduce our set
-      for (let index = 0; index < sortedArrangements.length; index += 1) {
-        const largestNumber = sortedArrangements[index];
-        const didFilter = this.filterOutDefiniteFits(consecutiveGroups, largestNumber);
-
-        if (didFilter) {
-          // remove largest number
-          sortedArrangements.splice(index, 1);
-        }
-      }
-
       // determine permutations/combinations of ways to fit remaining numbers into remaining consecutive groups
-      possibleCount += this.bruteForceReplacementChecks(consecutiveGroups, sortedArrangements);
+      possibleCount += this.bruteForceReplacementChecks(instructions, arrangements);
 
       return possibleCount;
     } else {
@@ -48,26 +33,24 @@ export class HotSprings {
     }
   }
 
-  bruteForceReplacementChecks(consecutiveGroups, sortedNumbers) {
-    // join back into a string for easier searching
-    const consecutiveGroupsJoined = consecutiveGroups.join('.');
+  bruteForceReplacementChecks(instruction, arrangements) {
     const combinations = [];
     let possibilityCount = 0;
 
     // get all possible combinations of all of the groups joined
-    this.generateCombinations(consecutiveGroupsJoined, 0, '', combinations);
+    this.generateCombinations(instruction, 0, '', combinations);
 
     combinations.forEach(combination => {
       const combinationsConsecutiveGroups = combination.match(/([?#]+)/g);
-      for (let i = 0; i < sortedNumbers.length; i++) {
-        const sortedNumber = sortedNumbers[i];
+      for (let i = 0; i < arrangements.length; i++) {
+        const numberToCheck = arrangements[i];
         if (combinationsConsecutiveGroups.length === 0) {
           // we still have numbers left but we quit, bail, not a match; add 1 so we don't miscount
           combinationsConsecutiveGroups.push('FAILURE');
           return false;
         }
 
-        const didFilter = this.filterOutDefiniteFits(combinationsConsecutiveGroups, sortedNumber);
+        const didFilter = this.filterOutDefiniteFits(combinationsConsecutiveGroups, numberToCheck);
 
         if (!didFilter) {
           // bail combination; it's not a match
@@ -104,14 +87,16 @@ export class HotSprings {
   }
 
   filterOutDefiniteFits(consecutiveGroups: string[], sizeToCheck: number) {
-    // calculate consecutive hashes that exactly match length, remove if you can
-    const definiteIndex = consecutiveGroups.findIndex((item, idx) => item.length === sizeToCheck && /^#+$/.test(item));
+    // Calculate consecutive hashes that exactly match length, remove if you can
+    const firstGroup = consecutiveGroups[0];
 
-    // only one possible match remove it to reduce miscounts later; return immediately we know it works
-    if (definiteIndex !== -1) {
-      consecutiveGroups.splice(definiteIndex, 1);
+    // Check the first consecutive group
+    if (firstGroup && firstGroup.length === sizeToCheck && /^#+$/.test(firstGroup)) {
+      // Only one possible match; remove it to reduce miscounts later and return immediately because we know it works
+      consecutiveGroups.shift(); // Remove the first group
       return true;
     }
+
     return false;
   }
 }
