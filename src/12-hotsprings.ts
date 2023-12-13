@@ -4,6 +4,7 @@ export class HotSprings {
     return this._possibleSum;
   }
   private _possibleSum = 0;
+  private cache = new Map();
 
   constructor(input: string, isPartB: boolean) {
     const inputArr = input.split('\n');
@@ -25,17 +26,14 @@ export class HotSprings {
       } else {
         arrangements = lineSplit[1].split(',').map(Number);
       }
-      this._possibleSum += this.getPossibleArrangements(instruction, arrangements);
+      this.getPossibleArrangements(instruction, arrangements);
     });
   }
 
   getPossibleArrangements(instructions: string, arrangements: number[]): number {
     if (instructions.includes('?')) {
-      let possibleCount = 0;
       // determine permutations/combinations of ways to fit remaining numbers into remaining consecutive groups
-      possibleCount += this.bruteForceReplacementChecks(instructions, arrangements);
-
-      return possibleCount;
+      this.bruteForceReplacementChecks(instructions, arrangements);
     } else {
       // if no ??? then the arrangement count is the instruction count
       return arrangements.length;
@@ -43,11 +41,10 @@ export class HotSprings {
   }
 
   bruteForceReplacementChecks(instruction, arrangements) {
-    const combinations = [];
-    let possibilityCount = 0;
+    let combinations = [];
 
     // get all possible combinations of all of the groups joined
-    this.generateCombinations(instruction, 0, '', combinations);
+    combinations = this.generateCombinationsWithCaching(instruction);
 
     combinations.forEach(combination => {
       const combinationsConsecutiveGroups = combination.match(/([?#]+)/g);
@@ -68,11 +65,50 @@ export class HotSprings {
       }
       if (combinationsConsecutiveGroups.length === 0) {
         // successfully fit each option
-        possibilityCount += 1;
+        this._possibleSum += 1;
       }
     });
-    return possibilityCount;
   }
+
+  generateCombinationsWithCaching(instruction) {
+    const combinationsConsecutiveGroups = instruction.match(/([?#]+)/g);
+    const runningCombinations = [];
+    const concatenatedArrays = [];
+
+    combinationsConsecutiveGroups.forEach(combination => {
+      const combinations = [];
+
+      // Check if the combination is already cached
+      if (this.cache.has(combination)) {
+        // If yes, use the cached result
+        combinations.push(...this.cache.get(combination));
+      } else {
+        this.generateCombinations(combination, 0, '', combinations);
+      }
+
+      runningCombinations.push(combinations);
+      // add to cache
+      this.cache.set(combination, combinations.slice());
+    });
+
+    this.squashArrayOfArrays(runningCombinations, 0, [], concatenatedArrays);
+
+    return concatenatedArrays;
+  }
+
+  squashArrayOfArrays(arrays, currentIndex, currentCombination, result) {
+    if (currentIndex === arrays.length) {
+      result.push(currentCombination.join('.'));
+      return;
+    }
+
+    for (const element of arrays[currentIndex]) {
+      currentCombination.push(element);
+      this.squashArrayOfArrays(arrays, currentIndex + 1, currentCombination, result);
+      currentCombination.pop();
+    }
+  }
+
 
   generateCombinations(str, index, currentCombination, result) {
     // Base case: if we have processed all characters in the input string
