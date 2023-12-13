@@ -16,6 +16,27 @@ test("Day 8 puzzle a sample", () => {
   expect(hotSprings.possibleSum).toEqual(21);
 });
 
+test("Day 8 puzzle a sample line 1", () => {
+  const input = `???.### 1,1,3`;
+
+  const hotSprings = new HotSprings(input);
+  expect(hotSprings.possibleSum).toEqual(1);
+});
+
+test("Day 8 puzzle a sample line 2", () => {
+  const input = `.??..??...?##. 1,1,3`;
+
+  const hotSprings = new HotSprings(input);
+  expect(hotSprings.possibleSum).toEqual(4);
+});
+
+test("Day 8 puzzle a sample line 3", () => {
+  const input = `?#?#?#?#?#?#?#? 1,3,1,6`;
+
+  const hotSprings = new HotSprings(input);
+  expect(hotSprings.possibleSum).toEqual(1);
+});
+
 test("Day 8 puzzle a input", () => {
   const input = `........#.........................................................................................................#..................#......
 .............#.......................#....................................#......#......................#.......................#...........
