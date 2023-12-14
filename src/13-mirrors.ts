@@ -20,9 +20,13 @@ export class Mirror {
       if (mirrorPoints.length === 0) {
         // its a horizontal fold
         mirrorPoints = this.searchForMirror(mazeColumns);
-        // vertical fold
-        const numToAdd = (mirrorPoints[0] + 1);
-        this._runningTotal += numToAdd;
+
+        // there could be no mirror?
+        if (mirrorPoints.length > 0) {
+          // vertical fold
+          const numToAdd = (mirrorPoints[0] + 1);
+          this._runningTotal += numToAdd;
+        }
       } else {
         // horizontal fold
         const numToAdd = (mirrorPoints[0] + 1) * 100;
@@ -51,7 +55,7 @@ export class Mirror {
         let maxCounter = index + 2;
         let isMirrored = true; // innocent until proven guilty
 
-        while ((minCounter !== 0 || maxCounter !== arrayToSearch.length) && isMirrored) {
+        while ((minCounter >= 0 && maxCounter < arrayToSearch.length) && isMirrored) {
           // check the rest of the array
           if (arrayToSearch[minCounter] === arrayToSearch[maxCounter]) {
             minCounter -= 1;
