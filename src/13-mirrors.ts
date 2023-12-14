@@ -79,29 +79,29 @@ export class Mirror {
       mirrorPoints = possibleMirrorIndexes;
     }
 
-    if (possibleMirrorIndexes.length > 2) {
-      // oh boy we have a tricky situation
-      if (possibleMirrorIndexes.length % 2 === 0) {
-        // evenly divisible, divide by 2 and take the two middle items
-        // 8/2 = 4; match would be 4 and 4 + 1
-        const middleIndex = possibleMirrorIndexes.length /2;
-        mirrorPoints.push(middleIndex);
-        mirrorPoints.push(middleIndex + 1);
-      } else {
-        // get ceiling point
-        const middlePoint = Math.ceil(possibleMirrorIndexes.length / 2);
-        mirrorPoints.push(middlePoint);
-
-        // this can only happen near an edge
-        if (possibleMirrorIndexes[possibleMirrorIndexes.length - 1] === arrayToSearch.length) {
-          // we ran over on the right side;
-          // ..#####]
-          mirrorPoints.push(middlePoint + 1);
-        } else {
-          mirrorPoints.push(middlePoint - 1);
-        }
-      }
-    }
+    // if (possibleMirrorIndexes.length > 2) {
+    //   // oh boy we have a tricky situation
+    //   if (possibleMirrorIndexes.length % 2 === 0) {
+    //     // evenly divisible, divide by 2 and take the two middle items
+    //     // 8/2 = 4; match would be 4 and 4 + 1
+    //     const middleIndex = possibleMirrorIndexes.length /2;
+    //     mirrorPoints.push(middleIndex);
+    //     mirrorPoints.push(middleIndex + 1);
+    //   } else {
+    //     // get ceiling point
+    //     const middlePoint = Math.ceil(possibleMirrorIndexes.length / 2);
+    //     mirrorPoints.push(middlePoint);
+    //
+    //     // this can only happen near an edge
+    //     if (possibleMirrorIndexes[possibleMirrorIndexes.length - 1] === arrayToSearch.length) {
+    //       // we ran over on the right side;
+    //       // ..#####]
+    //       mirrorPoints.push(middlePoint + 1);
+    //     } else {
+    //       mirrorPoints.push(middlePoint - 1);
+    //     }
+    //   }
+    // }
     return mirrorPoints.sort(function(a, b) {
       return a - b;
     });
