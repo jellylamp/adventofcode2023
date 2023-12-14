@@ -1,6 +1,5 @@
 // @ts-ignore see https://github.com/jest-community/jest-extended#setup
 import * as matchers from "jest-extended";
-import {HotSprings} from "./12-hotsprings";
 import {Mirror} from "./13-mirrors";
 
 expect.extend(matchers);
@@ -22,9 +21,11 @@ test("Day 13 puzzle a sample", () => {
 ..##..###
 #....#..#`;
 
-  const mirror = new Mirror(input);
+  const mirror = new Mirror(input, false);
   expect(mirror.runningTotal).toEqual(405);
 
+  const mirror2 = new Mirror(input, true);
+  expect(mirror2.runningTotal).toEqual(400);
 });
 
 test("Day 13 puzzle a sample broken up first", () => {
@@ -36,9 +37,11 @@ test("Day 13 puzzle a sample broken up first", () => {
 ..##..##.
 #.#.##.#.`;
 
-  const mirror = new Mirror(input);
+  const mirror = new Mirror(input, false);
   expect(mirror.runningTotal).toEqual(5);
 
+  const mirror2 = new Mirror(input, true);
+  expect(mirror2.runningTotal).toEqual(300);
 });
 
 
@@ -51,8 +54,11 @@ test("Day 13 puzzle a sample broken up second", () => {
 ..##..###
 #....#..#`;
 
-  const mirror = new Mirror(input);
+  const mirror = new Mirror(input, false);
   expect(mirror.runningTotal).toEqual(400);
+
+  const mirror2 = new Mirror(input, true);
+  expect(mirror2.runningTotal).toEqual(100);
 });
 
 test("Day 13 puzzle a input sample 2", () => {
@@ -70,8 +76,53 @@ test("Day 13 puzzle a input sample 2", () => {
 ..#..#..#..
 ...##...#..`;
 
-  const mirror = new Mirror(input);
+  const mirror = new Mirror(input, false);
   expect(mirror.runningTotal).toEqual(400);
+
+  const mirror2 = new Mirror(input, true);
+  expect(mirror2.runningTotal).toEqual(4);
+});
+
+test("Day 13 puzzle b edge cases", () => {
+  const input = `..##.#.
+#...###
+#...###
+..##.##
+..#..#.
+....##.
+#.#.#..
+.#...##
+##.#...
+###.###
+###.###
+##.#...
+.#...##`;
+
+  const mirror2 = new Mirror(input, true);
+  expect(mirror2.runningTotal).toEqual(200);
+});
+
+test("Day 13 puzzle b edge cases 2 - reset smudges if incorrect", () => {
+  const input = `#.#.###
+..##.##
+...####
+##....#
+##....#
+...####
+..##.##
+#.#.###
+#.#####
+....##.
+.#...#.
+#.#####
+#....##
+#..##.#
+#..##.#
+#..#.##
+#.#####`;
+
+  const mirror2 = new Mirror(input, true);
+  expect(mirror2.runningTotal).toEqual(1400);
 });
 
 test("Day 13 puzzle a sample input", () => {
@@ -1463,7 +1514,12 @@ test("Day 13 puzzle a sample input", () => {
 #.##.#.....#..#
 ..##..#.....#..`;
 
-  const mirror = new Mirror(input);
+  const mirror = new Mirror(input, false);
   expect(mirror.runningTotal).toEqual(40006);
+
+  // too high - 41083
+  // too low - 28474
+  const mirror2 = new Mirror(input, true);
+  expect(mirror2.runningTotal).toEqual(28627);
 });
 
