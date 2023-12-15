@@ -4,6 +4,16 @@ import {ParabolicDish} from "./14-parabolicdish";
 
 expect.extend(matchers);
 
+const jestConsole = console;
+
+beforeEach(() => {
+  global.console = require('console');
+});
+
+afterEach(() => {
+  global.console = jestConsole;
+});
+
 test("Day 14 puzzle a sample", () => {
   const input = `O....#....
 O.OO#....#
@@ -16,8 +26,11 @@ O.#..O.#.#
 #....###..
 #OO..#....`;
 
-  const dish = new ParabolicDish(input);
+  const dish = new ParabolicDish(input, false, 0);
   expect(dish.runningTotal).toEqual(136);
+
+  const dish2 = new ParabolicDish(input, true, 1000000000);
+  expect(dish2.runningTotal).toEqual(64);
 });
 
 test("Day 14 puzzle a input sample", () => {
@@ -122,6 +135,9 @@ O...#..#O#OO....O#OO#...O..#..#.#.#...O...#...#.....#.#..............O.O...#.O..
 #.#O......O.O......#.#OO........#.O#...#.O.OO.#......O#.O.......O.O.O..#.O#.#.....O...OO#O......O.O.
 ..O..O.O#.....OO......###.#........O#..#OO.OOO.#..O...#...#..O#.......O.#.##.#.............#O.......`;
 
-  const dish = new ParabolicDish(input);
+  const dish = new ParabolicDish(input, false, 0);
   expect(dish.runningTotal).toEqual(108641);
+
+  const dish2 = new ParabolicDish(input, true, 1000000000);
+  expect(dish2.runningTotal).toEqual(84328);
 });
