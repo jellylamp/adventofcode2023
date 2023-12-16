@@ -17,8 +17,11 @@ test("Day 16 puzzle a small simplified loop", () => {
 .|....-|.\\
 ..//.|....`;
 
-  const lightEmitter = new LightEmitter(input);
+  const lightEmitter = new LightEmitter(input, false);
   expect(lightEmitter.visited.size).toEqual(46);
+
+  const lightEmitter2 = new LightEmitter(input, true);
+  expect(lightEmitter2.highestCount).toEqual(51);
 });
 
 test("Day 16 puzzle input", () => {
@@ -133,6 +136,9 @@ test("Day 16 puzzle input", () => {
 ......-...................|../....................|...............|.............|/..\\.......|........\\......|.
 ......\\/.....|................./..................................|.......|./........|.............-...-......`;
 
-  const lightEmitter = new LightEmitter(input);
+  const lightEmitter = new LightEmitter(input, false);
   expect(lightEmitter.visited.size).toEqual(7979);
+
+  const lightEmitter2 = new LightEmitter(input, true);
+  expect(lightEmitter2.highestCount).toEqual(8437);
 });

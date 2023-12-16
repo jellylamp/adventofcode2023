@@ -6,15 +6,54 @@ interface NextMove {
 }
 
 export class LightEmitter {
+  get highestCount(): number {
+    return this._highestCount;
+  }
   get visited(): Set<string> {
     return this._visited;
   }
   grid = [];
   private _visited = new Set<string>;
+  private _highestCount = 0;
 
-  constructor(input: string) {
+  constructor(input: string, ifGetMaxConfiguration) {
     this.constructGrid(input.split('\n'));
-    this.traverseMazeBFS(0,0, 'E');
+
+    if (!ifGetMaxConfiguration) {
+      this.traverseMazeBFS(0, 0, 'E');
+    } else {
+      this.findBestStartingSpot();
+    }
+  }
+
+  findBestStartingSpot() {
+    for (let index = 0; index < this.grid.length; index += 1) {
+      // reset visited
+      this._visited = new Set<string>;
+      // run for each index and keep highest
+      this.traverseMazeBFS(index, 0, 'E');
+      const eastTraversalCount = this._visited.size;
+
+      // reset visited
+      this._visited = new Set<string>;
+      // run for each index and keep highest
+      this.traverseMazeBFS(index, this.grid.length - 1, 'W');
+      const westTraversalCount = this._visited.size;
+
+      // reset visited
+      this._visited = new Set<string>;
+      // run for each index and keep highest
+       this.traverseMazeBFS(0, index, 'S');
+       const southTraversalCount = this._visited.size;
+
+      // reset visited
+      this._visited = new Set<string>;
+      // run for each index and keep highest
+      this.traverseMazeBFS(this.grid.length - 1, index, 'N');
+      const northTraversalCount = this._visited.size;
+
+      this._highestCount = Math.max(eastTraversalCount, westTraversalCount, northTraversalCount, southTraversalCount, this.highestCount);
+    }
   }
 
   constructGrid(inputList) {
@@ -25,12 +64,7 @@ export class LightEmitter {
     }
   }
 
-  // traverseMazeBFS(row, col, direction) {
-  //     this._visited.add(this.getKey(row, col));
-  //     this.moveBeam(row, col, direction);
-  // }
-
-    traverseMazeBFS(startRow, startCol, direction) {
+  traverseMazeBFS(startRow, startCol, direction) {
     let queue = [[startRow, startCol, direction, []]]; // [row, col, pathLen, path]
     const visited = new Set();
 
