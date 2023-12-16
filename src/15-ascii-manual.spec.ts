@@ -10,6 +10,7 @@ test("Day 15 puzzle a sample", () => {
 
   const asciiManual = new AsciiManual(input);
   expect(asciiManual.hashTotalSum).toEqual(1320);
+  expect(asciiManual.focalPower).toEqual(145);
 });
 
 test("Day 15 puzzle input sample", () => {
@@ -17,4 +18,5 @@ test("Day 15 puzzle input sample", () => {
 
   const asciiManual = new AsciiManual(input);
   expect(asciiManual.hashTotalSum).toEqual(518107);
+  expect(asciiManual.focalPower).toEqual(303404);
 });
