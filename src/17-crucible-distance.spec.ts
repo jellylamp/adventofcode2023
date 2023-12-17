@@ -22,3 +22,17 @@ test("Day 17 puzzle a small simplified loop", () => {
   const crucibleDistance = new CrucibleDistance(input);
   // expect(crucibleDistance.heatLost).toEqual(102);
 });
+
+// 241^>>>11323
+// v>>>45v>>623
+// 32552456v>>54
+// 3446585845v52
+// 4546657867v>6
+// 14385987984v>
+// 445787698776v
+// 363787797965v
+// 46549679868<V
+// 45646799864v>
+// 122468686556v
+// 254654888773v
+// 432267465553v

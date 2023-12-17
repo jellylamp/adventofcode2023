@@ -80,7 +80,8 @@ export class CrucibleDistance {
 
   calculateHeuristic(row, col, endRow, endCol) {
     // Manhattan distance heuristic
-    return Math.abs(endRow - row) + Math.abs(endCol - col);
+    // return Math.abs(endRow - row) + Math.abs(endCol - col);
+    return Math.sqrt(Math.pow(endRow - row, 2) + Math.pow(endCol - col, 2));
   }
 
   getNeighbors(row, col, direction) {
