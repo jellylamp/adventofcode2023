@@ -50,7 +50,7 @@ export class CrucibleDistance {
 
         if (
           this.isValidCell(neighborRow, neighborCol, neighborDirection, currentNode, currentNode.parent, currentNode.grandParent)
-          && !visited.has(`${neighborRow}-${neighborCol}`)
+          && !visited.has(`${neighborRow}-${neighborCol}-${neighborDirection}`)
         ) {
           const possibleCurrentPathCost = currentNode.currentPathCost + parseInt(this.grid[neighborRow][neighborCol]);
           const existingNode = discoveredButUnvisited.find((node) => node.row === neighborRow && node.col === neighborCol);
@@ -114,10 +114,8 @@ export class CrucibleDistance {
         ];
       default:
         return [
-          { neighborRow: row - 1, neighborCol: col, neighborDirection: 'N' },
           { neighborRow: row, neighborCol: col + 1, neighborDirection: 'E' },
           { neighborRow: row + 1, neighborCol: col, neighborDirection: 'S' },
-          { neighborRow: row, neighborCol: col - 1, neighborDirection: 'W' }
         ];
     }
   }
