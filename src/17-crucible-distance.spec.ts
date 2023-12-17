@@ -200,5 +200,6 @@ test("Day 17 puzzle a input", () => {
 
   const crucibleDistance = new CrucibleDistance(input);
   // too high (tried subtracting last item bc maybe that would work right)
+  // 1012 too high also obvi
   expect(crucibleDistance.heatLost).toEqual(995);
 });

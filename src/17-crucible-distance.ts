@@ -20,10 +20,10 @@ export class CrucibleDistance {
     const startNode = {
       row: startRow,
       col: startCol,
-      direction: 'E',
+      direction: 'S',
       currentPathCost: 0,
       costToGoalEstimate: this.calculateHeuristic(startRow, startCol, endRow, endCol),
-      estimatedTotalCost: 0,
+      estimatedTotalCost: this.calculateHeuristic(startRow, startCol, endRow, endCol),
       parent: null,
       grandParent: null
     };
@@ -80,8 +80,7 @@ export class CrucibleDistance {
 
   calculateHeuristic(row, col, endRow, endCol) {
     // Manhattan distance heuristic
-    // return Math.abs(endRow - row) + Math.abs(endCol - col);
-    return Math.sqrt(Math.pow(endRow - row, 2) + Math.pow(endCol - col, 2));
+    return Math.abs(endRow - row) + Math.abs(endCol - col);
   }
 
   getNeighbors(row, col, direction) {
@@ -96,20 +95,20 @@ export class CrucibleDistance {
         ];
       case ('E'):
         return [
-          { neighborRow: row - 1, neighborCol: col, neighborDirection: 'N' }, // left
           { neighborRow: row, neighborCol: col + 1, neighborDirection: 'E' }, // straight
+          { neighborRow: row - 1, neighborCol: col, neighborDirection: 'N' }, // left
           { neighborRow: row + 1, neighborCol: col, neighborDirection: 'S' } // right
         ];
       case ('W'):
         return [
+          { neighborRow: row, neighborCol: col - 1, neighborDirection: 'W' }, // straight
           { neighborRow: row - 1, neighborCol: col, neighborDirection: 'N' }, // right
-          { neighborRow: row + 1, neighborCol: col, neighborDirection: 'S' }, // left
-          { neighborRow: row, neighborCol: col - 1, neighborDirection: 'W' } // straight
+          { neighborRow: row + 1, neighborCol: col, neighborDirection: 'S' } // left
         ];
       case ('S'):
         return [
-          { neighborRow: row, neighborCol: col + 1, neighborDirection: 'E' }, // left
           { neighborRow: row + 1, neighborCol: col, neighborDirection: 'S' }, // straight
+          { neighborRow: row, neighborCol: col + 1, neighborDirection: 'E' }, // left
           { neighborRow: row, neighborCol: col - 1, neighborDirection: 'W' } // right
         ];
       default:
