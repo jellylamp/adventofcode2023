@@ -42,7 +42,7 @@ export class CrucibleDistance {
         return this.reconstructPath(currentNode);
       }
 
-      visited.add(`${row}-${col}`);
+      visited.add(`${row}-${col}-${direction}`);
 
       const neighbors = this.getNeighbors(row, col, direction);
       for (const neighbor of neighbors) {
