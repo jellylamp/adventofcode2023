@@ -9,7 +9,7 @@ export class CrucibleDistance {
   constructor(inputArr) {
     this.grid = inputArr.split('\n');
     const path = this.aStar(0, 0, this.grid.length - 1, this.grid[0].length - 1);
-    console.log(path);
+    // console.log(path);
     console.log(this.heatLost);
   }
 
@@ -20,7 +20,7 @@ export class CrucibleDistance {
     const startNode = {
       row: startRow,
       col: startCol,
-      direction: 'S',
+      direction: 'E',
       currentPathCost: 0,
       costToGoalEstimate: this.calculateHeuristic(startRow, startCol, endRow, endCol),
       estimatedTotalCost: this.calculateHeuristic(startRow, startCol, endRow, endCol),
@@ -39,7 +39,7 @@ export class CrucibleDistance {
 
       if (row === endRow && col === endCol) {
         // return the final taken path
-        return this.reconstructPath(currentNode);
+        return this.reconstructPathAndPrint(currentNode);
       }
 
       visited.add(`${row}-${col}-${direction}`);
@@ -147,6 +147,49 @@ export class CrucibleDistance {
       node = node.parent;
     }
     return path.reverse();
+  }
+
+  reconstructPathAndPrint(node) {
+    const path = [];
+    const pathGrid = this.grid.map(row => row.split(''));
+
+    // reverse back while node is not null or we are not at the start
+    while (node !== null) {
+      const { row, col, direction } = node;
+
+      if (!(row === 0 && col === 0)) {
+        this._heatLost += parseInt(this.grid[row][col]);
+        // Mark the path in the grid based on the direction
+        pathGrid[row][col] = this.getArrowMarker(direction);
+      }
+
+      path.push({ row, col, direction });
+      node = node.parent;
+    }
+
+    // Convert the path grid to a string
+    const pathString = pathGrid.map(row => row.join('')).join('\n');
+
+    // Print the path string
+    console.log(pathString);
+
+    // Return the path array
+    return path.reverse();
+  }
+
+  getArrowMarker(direction) {
+    switch (direction) {
+      case 'N':
+        return '^';
+      case 'E':
+        return '>';
+      case 'S':
+        return 'v';
+      case 'W':
+        return '<';
+      default:
+        return 'v'; // Default to 'v' for unknown direction
+    }
   }
 }
 
