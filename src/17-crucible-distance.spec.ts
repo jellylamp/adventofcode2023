@@ -1,6 +1,7 @@
 // @ts-ignore see https://github.com/jest-community/jest-extended#setup
 import * as matchers from "jest-extended";
-import {CrucibleDistance} from "./17-crucible-distance";
+import {CrucibleDistance} from "./17a-crucible-distance";
+import {UltraCrucibleDistance} from "./17b-ultra-crucible-distance";
 
 expect.extend(matchers);
 
@@ -21,6 +22,9 @@ test("Day 17 puzzle a small simplified loop", () => {
 
   const crucibleDistance = new CrucibleDistance(input);
   expect(crucibleDistance.heatLost).toEqual(102);
+
+  const ultraCrucibleDistance = new UltraCrucibleDistance(input);
+  expect(ultraCrucibleDistance.heatLost).toEqual(94);
 });
 
 test("Day 17 puzzle a reddit test 1", () => {
@@ -176,4 +180,7 @@ test("Day 17 puzzle a input", () => {
 
   const crucibleDistance = new CrucibleDistance(input);
   expect(crucibleDistance.heatLost).toEqual(963);
+
+  const ultraCrucibleDistance = new UltraCrucibleDistance(input);
+  expect(ultraCrucibleDistance.heatLost).toEqual(1178);
 });

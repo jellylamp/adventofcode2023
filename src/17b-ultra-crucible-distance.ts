@@ -1,5 +1,5 @@
 
-export class CrucibleDistance {
+export class UltraCrucibleDistance {
   get heatLost(): number {
     return this._heatLost;
   }
@@ -12,7 +12,6 @@ export class CrucibleDistance {
     console.log(this.heatLost);
   }
 
-
   dijkstra(startRow, startCol, endRow, endCol) {
     const priorityQueue = [];
     const visited = new Set();
@@ -20,7 +19,7 @@ export class CrucibleDistance {
     const startNode = {
       row: startRow,
       col: startCol,
-      direction: 'E',
+      direction: '',
       currentPathCost: 0,
       consecutiveSteps: 0,
       parent: null,
@@ -45,7 +44,7 @@ export class CrucibleDistance {
 
       visited.add(key);
 
-      const neighbors = this.getNeighbors(row, col, direction);
+      const neighbors = this.getNeighbors(row, col, direction, consecutiveSteps);
       for (const neighbor of neighbors) {
         const { neighborRow, neighborCol, neighborDirection } = neighbor;
 
@@ -70,34 +69,55 @@ export class CrucibleDistance {
     return null; // No path found
   }
 
-  getNeighbors(row, col, direction) {
+  getNeighbors(row, col, direction, consecutiveSteps) {
     // can only move left, right, or straight
+    const minStepsBeforeTurn = 4;
 
     switch (direction) {
       case ('N'):
-        return [
+        let dirArr = [
           { neighborRow: row - 1, neighborCol: col, neighborDirection: 'N' }, // straight
-          { neighborRow: row, neighborCol: col + 1, neighborDirection: 'E' }, // right
-          { neighborRow: row, neighborCol: col - 1, neighborDirection: 'W' } // left
         ];
+
+        if (consecutiveSteps >= minStepsBeforeTurn) {
+          dirArr.push({ neighborRow: row, neighborCol: col + 1, neighborDirection: 'E' }); // right
+          dirArr.push({ neighborRow: row, neighborCol: col - 1, neighborDirection: 'W' }); // left
+        }
+
+        return dirArr;
       case ('E'):
-        return [
+        let eastDirArr = [
           { neighborRow: row, neighborCol: col + 1, neighborDirection: 'E' }, // straight
-          { neighborRow: row - 1, neighborCol: col, neighborDirection: 'N' }, // left
-          { neighborRow: row + 1, neighborCol: col, neighborDirection: 'S' } // right
         ];
+
+        if (consecutiveSteps >= minStepsBeforeTurn) {
+          eastDirArr.push({ neighborRow: row + 1, neighborCol: col, neighborDirection: 'S' }); // right
+          eastDirArr.push({ neighborRow: row - 1, neighborCol: col, neighborDirection: 'N' }); // left
+        }
+
+        return eastDirArr;
       case ('W'):
-        return [
+        let westDirArr = [
           { neighborRow: row, neighborCol: col - 1, neighborDirection: 'W' }, // straight
-          { neighborRow: row - 1, neighborCol: col, neighborDirection: 'N' }, // right
-          { neighborRow: row + 1, neighborCol: col, neighborDirection: 'S' } // left
         ];
+
+        if (consecutiveSteps >= minStepsBeforeTurn) {
+          westDirArr.push({ neighborRow: row - 1, neighborCol: col, neighborDirection: 'N' }); // right
+          westDirArr.push({ neighborRow: row + 1, neighborCol: col, neighborDirection: 'S' }); // left
+        }
+
+        return westDirArr;
       case ('S'):
-        return [
+        let southDirArr = [
           { neighborRow: row + 1, neighborCol: col, neighborDirection: 'S' }, // straight
-          { neighborRow: row, neighborCol: col + 1, neighborDirection: 'E' }, // left
-          { neighborRow: row, neighborCol: col - 1, neighborDirection: 'W' } // right
         ];
+
+        if (consecutiveSteps >= minStepsBeforeTurn) {
+          southDirArr.push({ neighborRow: row, neighborCol: col - 1, neighborDirection: 'W' }); // right
+          southDirArr.push({ neighborRow: row, neighborCol: col + 1, neighborDirection: 'E' }); // left
+        }
+
+        return southDirArr;
       default:
         return [
           { neighborRow: row, neighborCol: col + 1, neighborDirection: 'E' },
@@ -108,13 +128,30 @@ export class CrucibleDistance {
 
   isValidCell(row, col, direction, parent, grandParent, greatGrandParent, consecutiveSteps) {
     const doesntExceedBounds = row >= 0 && row < this.grid.length && col >= 0 && col < this.grid[0].length;
+    const endRow = this.grid.length - 1;
+    const endCol = this.grid[0].length - 1;
 
     // check that we haven't moved more than three times in a row in a straight direction
     const gpDir = grandParent ? grandParent.direction : '';
     const pDir = parent ? parent.direction : '';
 
     // can't move more than three times in the same direction
-    if (gpDir === pDir && pDir === direction && consecutiveSteps > 2) {
+    if (gpDir === pDir && pDir === direction && consecutiveSteps >= 10) {
+      return false;
+    }
+
+    // can't turn before 4
+    const minStepsBeforeTurn = 4;
+    if (pDir !== '' && pDir !== direction && consecutiveSteps < minStepsBeforeTurn) {
+      return false;
+    }
+
+    // ensure that the path reaches endRow and endCol only after at least 4 consecutive steps
+    // tricksy wording (or even before it can stop at the end)
+    if (row === endRow && col === endCol) {
+      console.log('here');
+    }
+    if ((row === endRow && col === endCol) && (consecutiveSteps < minStepsBeforeTurn || direction !== pDir)) {
       return false;
     }
 
