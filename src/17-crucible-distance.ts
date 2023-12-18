@@ -55,7 +55,7 @@ export class CrucibleDistance {
           const possibleCurrentPathCost = currentNode.currentPathCost + parseInt(this.grid[neighborRow][neighborCol]);
           const existingNode = discoveredButUnvisited.find((node) => node.row === neighborRow && node.col === neighborCol);
 
-          if (!existingNode || possibleCurrentPathCost < existingNode.currentPathCost) {
+          if (!existingNode || possibleCurrentPathCost <= existingNode.currentPathCost) {
             const newNode = {
               row: neighborRow,
               col: neighborCol,
@@ -128,7 +128,7 @@ export class CrucibleDistance {
     const pDir = parent ? parent.direction : '';
 
     // can't move more three times in the same direction
-    if (ggpDir === direction && gpDir === direction && pDir === direction) {
+    if (ggpDir === pDir && gpDir === direction && pDir === direction) {
       return false;
     }
 
