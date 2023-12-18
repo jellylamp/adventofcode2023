@@ -8,13 +8,13 @@ export class CrucibleDistance {
 
   constructor(inputArr) {
     this.grid = inputArr.split('\n');
-    const path = this.aStar(0, 0, this.grid.length - 1, this.grid[0].length - 1);
-    // console.log(path);
+    this.dijkstra(0, 0, this.grid.length - 1, this.grid[0].length - 1);
     console.log(this.heatLost);
   }
 
-  aStar(startRow, startCol, endRow, endCol) {
-    const discoveredButUnvisited = [];
+
+  dijkstra(startRow, startCol, endRow, endCol) {
+    const priorityQueue = [];
     const visited = new Set();
 
     const startNode = {
@@ -22,65 +22,52 @@ export class CrucibleDistance {
       col: startCol,
       direction: 'E',
       currentPathCost: 0,
-      costToGoalEstimate: this.calculateHeuristic(startRow, startCol, endRow, endCol),
-      estimatedTotalCost: this.calculateHeuristic(startRow, startCol, endRow, endCol),
+      consecutiveSteps: 0,
       parent: null,
       grandParent: null
     };
 
-    discoveredButUnvisited.push(startNode);
+    priorityQueue.push(startNode);
 
-    while (discoveredButUnvisited.length > 0) {
-      // sort unvisited by weights
-      discoveredButUnvisited.sort((a, b) => a.estimatedTotalCost - b.estimatedTotalCost);
-
-      const currentNode = discoveredButUnvisited.shift();
-      const { row, col, direction } = currentNode;
+    while (priorityQueue.length > 0) {
+      priorityQueue.sort((a, b) => a.currentPathCost - b.currentPathCost);
+      const currentNode = priorityQueue.shift();
+      const { row, col, direction, grandParent, consecutiveSteps } = currentNode;
 
       if (row === endRow && col === endCol) {
-        // return the final taken path
         return this.reconstructPathAndPrint(currentNode);
       }
 
-      visited.add(`${row}-${col}-${direction}`);
+      const key = `${row}-${col}-${direction}-${consecutiveSteps}`;
+      if (visited.has(key)) {
+        continue;
+      }
+
+      visited.add(key);
 
       const neighbors = this.getNeighbors(row, col, direction);
       for (const neighbor of neighbors) {
         const { neighborRow, neighborCol, neighborDirection } = neighbor;
 
-        if (
-          this.isValidCell(neighborRow, neighborCol, neighborDirection, currentNode, currentNode.parent, currentNode.grandParent)
-          && !visited.has(`${neighborRow}-${neighborCol}-${neighborDirection}`)
-        ) {
+        if (this.isValidCell(neighborRow, neighborCol, neighborDirection, currentNode, currentNode.parent, grandParent, consecutiveSteps)) {
           const possibleCurrentPathCost = currentNode.currentPathCost + parseInt(this.grid[neighborRow][neighborCol]);
-          const existingNode = discoveredButUnvisited.find((node) => node.row === neighborRow && node.col === neighborCol);
 
-          if (!existingNode || possibleCurrentPathCost <= existingNode.currentPathCost) {
-            const newNode = {
-              row: neighborRow,
-              col: neighborCol,
-              direction: neighborDirection,
-              currentPathCost: possibleCurrentPathCost,
-              costToGoalEstimate: this.calculateHeuristic(neighborRow, neighborCol, endRow, endCol),
-              estimatedTotalCost: possibleCurrentPathCost + this.calculateHeuristic(neighborRow, neighborCol, endRow, endCol),
-              parent: currentNode,
-              grandParent: currentNode.parent
-            };
+          const newNode = {
+            row: neighborRow,
+            col: neighborCol,
+            direction: neighborDirection,
+            currentPathCost: possibleCurrentPathCost,
+            consecutiveSteps: neighborDirection === direction ? consecutiveSteps + 1 : 1,
+            parent: currentNode,
+            grandParent: currentNode.parent
+          };
 
-            if (!existingNode) {
-              discoveredButUnvisited.push(newNode);
-            }
-          }
+          priorityQueue.push(newNode);
         }
       }
     }
 
     return null; // No path found
-  }
-
-  calculateHeuristic(row, col, endRow, endCol) {
-    // Manhattan distance heuristic
-    return Math.abs(endRow - row) + Math.abs(endCol - col);
   }
 
   getNeighbors(row, col, direction) {
@@ -119,51 +106,35 @@ export class CrucibleDistance {
     }
   }
 
-  isValidCell(row, col, direction, parent, grandParent, greatGrandParent) {
+  isValidCell(row, col, direction, parent, grandParent, greatGrandParent, consecutiveSteps) {
     const doesntExceedBounds = row >= 0 && row < this.grid.length && col >= 0 && col < this.grid[0].length;
 
-    // check that we havent moved more than three times in a row in a straight direction
-    const ggpDir = greatGrandParent ? greatGrandParent.direction : '';
+    // check that we haven't moved more than three times in a row in a straight direction
     const gpDir = grandParent ? grandParent.direction : '';
     const pDir = parent ? parent.direction : '';
 
-    // can't move more three times in the same direction
-    if (ggpDir === pDir && gpDir === direction && pDir === direction) {
+    // can't move more than three times in the same direction
+    if (gpDir === pDir && pDir === direction && consecutiveSteps > 2) {
       return false;
     }
 
     return doesntExceedBounds;
   }
 
-  reconstructPath(node) {
-    const path = [];
-    // reverse back while node is not null or we are not at the start
-    while (node !== null) {
-      path.push({ row: node.row, col: node.col });
-
-      if (!(node.row === 0 && node.col === 0)) {
-        this._heatLost += parseInt(this.grid[node.row][node.col]);
-      }
-      node = node.parent;
-    }
-    return path.reverse();
-  }
-
   reconstructPathAndPrint(node) {
     const path = [];
     const pathGrid = this.grid.map(row => row.split(''));
 
-    // reverse back while node is not null or we are not at the start
     while (node !== null) {
       const { row, col, direction } = node;
 
       if (!(row === 0 && col === 0)) {
         this._heatLost += parseInt(this.grid[row][col]);
+        path.push({ row, col, direction });
         // Mark the path in the grid based on the direction
         pathGrid[row][col] = this.getArrowMarker(direction);
       }
 
-      path.push({ row, col, direction });
       node = node.parent;
     }
 

@@ -20,38 +20,16 @@ test("Day 17 puzzle a small simplified loop", () => {
 4322674655533`;
 
   const crucibleDistance = new CrucibleDistance(input);
-  // expect(crucibleDistance.heatLost).toEqual(102);
+  expect(crucibleDistance.heatLost).toEqual(102);
 });
 
-// east (102)
-//     24^>>>^>>>323
-//     v>>54v>53v623
-//     325524565v>54
-//     3446585845v52
-//     4546657867v>6
-//     14385987984v4
-//     44578769877v6
-//     36378779796v>
-//     465496798688v
-//     456467998645v
-//     12246868655<v
-//     25465488877v5
-//     43226746555v>
+test("Day 17 puzzle a reddit test 1", () => {
+  const input = `112999
+911111`;
 
-// south (109)
-//     241^>>>311323
-//     v>>>45v>>>623
-//     325524565v>54
-//     3446585845v52
-//     4546657867v>6
-//     14385987984v>
-//     445787698776v
-//     363787797965v
-//     46549679868<v
-//     45646799864v>
-//     122468686556v
-//     254654888773v
-//     432267465553v
+  const crucibleDistance = new CrucibleDistance(input);
+  expect(crucibleDistance.heatLost).toEqual(7);
+});
 
 test("Day 17 puzzle a input", () => {
   const input = `534415514135453124461333615152111172677134533636656271274236365616565137415273525511165575327363331241741557653113666233613115623152664423332
@@ -197,7 +175,5 @@ test("Day 17 puzzle a input", () => {
 124444552364152561665532531634233615724764471561612226344134256716317667432613647737247777667745522756612542716752564161336133565445451234112`;
 
   const crucibleDistance = new CrucibleDistance(input);
-  // too high (tried subtracting last item bc maybe that would work right)
-  // 1012 too high also obvi
-  expect(crucibleDistance.heatLost).toEqual(995);
+  expect(crucibleDistance.heatLost).toEqual(963);
 });
