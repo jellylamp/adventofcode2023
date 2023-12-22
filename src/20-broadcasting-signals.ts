@@ -23,12 +23,15 @@ export class BroadcastingSignals {
   highPulseCount = 0;
   signalQueue = [];
   finalCount = 0;
+  runningButtonPresses = 0;
+  rxButtonPresses = -1;
 
   constructor(input: string, buttonPresses) {
     const inputArr = input.split("\n");
     this.buildMap(inputArr);
 
     for (let i = 0; i < buttonPresses; i+= 1) {
+      this.runningButtonPresses = i;
       this.pressButton();
       this.runQueue();
     }
@@ -38,6 +41,11 @@ export class BroadcastingSignals {
   runQueue() {
     while (this.signalQueue.length > 0) {
       const sentSignal = this.signalQueue.shift();
+
+      if (sentSignal.key === 'rx' && sentSignal.isLow) {
+        this.rxButtonPresses = this.runningButtonPresses;
+        break;
+      }
 
       // handle the signal
       if (sentSignal.isLow) {

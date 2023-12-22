@@ -159,4 +159,7 @@ broadcaster -> sr, cg, dt, zs
 
   const buttonSignalsTwice = new BroadcastingSignals(input, 1000);
   expect(buttonSignalsTwice.finalCount).toEqual(808146535);
+  // 999 too low!
+  const buttonSignalsTwice2 = new BroadcastingSignals(input, 1000000000);
+  expect(buttonSignalsTwice2.rxButtonPresses).toEqual(0);
 });
